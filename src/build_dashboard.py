@@ -33,6 +33,34 @@ FINANCIAL_URL_TEMPLATE = (
 MAIN_COLS = ["n1", "n2", "n3", "n4", "n5"]
 STAR_COLS = ["s1", "s2"]
 
+def classify_euromillions_era(draw_date: str) -> dict:
+    date = pd.to_datetime(draw_date).date()
+
+    if date <= pd.to_datetime("2011-05-06").date():
+        return {
+            "era": "Era 1: 2004-2011",
+            "era_code": "era_1",
+            "main_pool": 50,
+            "star_pool": 9,
+            "era_weight": 0.25,
+        }
+
+    if date <= pd.to_datetime("2016-09-23").date():
+        return {
+            "era": "Era 2: 2011-2016",
+            "era_code": "era_2",
+            "main_pool": 50,
+            "star_pool": 11,
+            "era_weight": 0.50,
+        }
+
+    return {
+        "era": "Era 3: 2016-current",
+        "era_code": "era_3",
+        "main_pool": 50,
+        "star_pool": 12,
+        "era_weight": 1.00,
+    }
 
 def ensure_folders() -> None:
     for folder in [
@@ -248,20 +276,42 @@ def star_zone_signature(stars: list[int]) -> str:
 
 def add_pattern_columns(draws: pd.DataFrame) -> pd.DataFrame:
     enriched = draws.copy()
+
+    era_data = enriched["draw_date"].apply(classify_euromillions_era)
+
+    enriched["era"] = era_data.apply(lambda item: item["era"])
+    enriched["era_code"] = era_data.apply(lambda item: item["era_code"])
+    enriched["main_pool"] = era_data.apply(lambda item: item["main_pool"])
+    enriched["star_pool"] = era_data.apply(lambda item: item["star_pool"])
+    enriched["era_weight"] = era_data.apply(lambda item: item["era_weight"])
+
     enriched[MAIN_COLS] = enriched[MAIN_COLS].astype(int)
     enriched[STAR_COLS] = enriched[STAR_COLS].astype(int)
+
     enriched["main_numbers"] = enriched[MAIN_COLS].values.tolist()
     enriched["star_numbers"] = enriched[STAR_COLS].values.tolist()
     enriched["zone_signature"] = enriched["main_numbers"].apply(zone_signature)
     enriched["star_zone_signature"] = enriched["star_numbers"].apply(star_zone_signature)
     enriched["sum"] = enriched[MAIN_COLS].sum(axis=1)
-    enriched["odd_count"] = enriched[MAIN_COLS].apply(lambda row: sum(number % 2 for number in row), axis=1)
+
+    enriched["odd_count"] = enriched[MAIN_COLS].apply(
+        lambda row: sum(number % 2 for number in row),
+        axis=1,
+    )
     enriched["even_count"] = 5 - enriched["odd_count"]
-    enriched["low_count"] = enriched[MAIN_COLS].apply(lambda row: sum(number <= 25 for number in row), axis=1)
+
+    enriched["low_count"] = enriched[MAIN_COLS].apply(
+        lambda row: sum(number <= 25 for number in row),
+        axis=1,
+    )
     enriched["high_count"] = 5 - enriched["low_count"]
+
     enriched.to_csv(PROCESSED_DIR / "draws_enriched.csv", index=False)
+
     return enriched
 
+def current_era_draws(enriched: pd.DataFrame) -> pd.DataFrame:
+    return enriched[enriched["era_code"] == "era_3"].copy()
 
 def analyze_missing_zone_patterns(enriched: pd.DataFrame, recent_window: int = 50) -> pd.DataFrame:
     historical = enriched["zone_signature"].value_counts(normalize=True)
