@@ -340,10 +340,103 @@ def generate_tickets(missing_patterns: pd.DataFrame, amount: int = 10) -> pd.Dat
     return df
 
 
+def backtest_missing_pattern_strategy(
+    enriched: pd.DataFrame,
+    training_window: int = 200,
+    recent_window: int = 50,
+    top_n: int = 10,
+) -> pd.DataFrame:
+    rows = []
+
+    if len(enriched) <= training_window + 1:
+        return pd.DataFrame()
+
+    for index in range(training_window, len(enriched)):
+        history = enriched.iloc[:index]
+        actual = enriched.iloc[index]
+
+        historical_rates = history["zone_signature"].value_counts(normalize=True)
+        recent_rates = history.tail(recent_window)["zone_signature"].value_counts(normalize=True)
+
+        signatures = sorted(set(historical_rates.index).union(set(recent_rates.index)))
+
+        missing_scores = []
+
+        for signature in signatures:
+            historical_rate = float(historical_rates.get(signature, 0))
+            recent_rate = float(recent_rates.get(signature, 0))
+            missing_score = historical_rate - recent_rate
+
+            missing_scores.append(
+                {
+                    "zone_signature": signature,
+                    "missing_score": missing_score,
+                    "historical_rate": historical_rate,
+                }
+            )
+
+        missing_df = pd.DataFrame(missing_scores).sort_values(
+            "missing_score",
+            ascending=False,
+        )
+
+        common_signatures = (
+            history["zone_signature"]
+            .value_counts()
+            .head(top_n)
+            .index
+            .tolist()
+        )
+
+        predicted_missing_signatures = missing_df.head(top_n)["zone_signature"].tolist()
+        actual_signature = actual["zone_signature"]
+
+        unique_signature_count = max(1, history["zone_signature"].nunique())
+        random_baseline_probability = min(1.0, top_n / unique_signature_count)
+
+        rows.append(
+            {
+                "draw_date": actual["draw_date"],
+                "actual_zone_signature": actual_signature,
+                "missing_strategy_hit": actual_signature in predicted_missing_signatures,
+                "common_strategy_hit": actual_signature in common_signatures,
+                "random_signature_baseline": random_baseline_probability,
+            }
+        )
+
+    result = pd.DataFrame(rows)
+
+    result.to_csv(PROCESSED_DIR / "backtest_results.csv", index=False)
+
+    summary = pd.DataFrame(
+        [
+            {
+                "test_name": "Missing-pattern top zone signatures",
+                "draws_tested": len(result),
+                "hit_rate": round(float(result["missing_strategy_hit"].mean()), 4),
+            },
+            {
+                "test_name": "Most-common top zone signatures",
+                "draws_tested": len(result),
+                "hit_rate": round(float(result["common_strategy_hit"].mean()), 4),
+            },
+            {
+                "test_name": "Random signature baseline estimate",
+                "draws_tested": len(result),
+                "hit_rate": round(float(result["random_signature_baseline"].mean()), 4),
+            },
+        ]
+    )
+
+    summary.to_csv(PROCESSED_DIR / "backtest_summary.csv", index=False)
+
+    return summary
+
 def generate_html_dashboard(
     enriched: pd.DataFrame,
     missing_patterns: pd.DataFrame,
     tickets: pd.DataFrame,
+    backtest_summary: pd.DataFrame,
 ) -> None:
     latest = enriched.tail(1).iloc[0]
     top_patterns = missing_patterns.head(10)
@@ -414,6 +507,15 @@ def generate_html_dashboard(
   </div>
 
   <div class="card">
+    <h2>Backtest summary</h2>
+    <p>
+      This checks whether the next historical draw matched one of the top predicted rainbow-zone signatures.
+      It validates the structure strategy, not jackpot-winning ticket accuracy.
+    </p>
+    {backtest_summary.to_html(index=False)}
+  </div>
+
+  <div class="card">
     <h2>Hot main numbers</h2>
     {hot_numbers.to_html(index=False)}
   </div>
@@ -442,7 +544,9 @@ def main() -> None:
     missing_patterns = analyze_missing_zone_patterns(enriched)
     tickets = generate_tickets(missing_patterns)
 
-    generate_html_dashboard(enriched, missing_patterns, tickets)
+    backtest_summary = backtest_missing_pattern_strategy(enriched)
+
+    generate_html_dashboard(enriched, missing_patterns, tickets, backtest_summary)
 
     summary = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
@@ -461,5 +565,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
 
 
