@@ -239,11 +239,11 @@ def band_score(avg: float, low: float, high: float) -> int:
     return max(0, int(100 - min(100, ((avg - high) / max(high, 1)) * 100)))
 
 
-def score_ticket(nums: list[int], stars: list[int], hybrid: pd.DataFrame, ctx: dict) -> dict:
+def score_ticket(nums: list[int], stars: list[int], hybrid_lookup: dict, ctx: dict) -> dict:
     nums, stars = sorted(nums), sorted(stars)
     sig = zone_signature(nums)
     star_sig = star_zone_signature(stars)
-    hybrid_row = hybrid.set_index("zone_signature").to_dict("index").get(sig, {})
+    hybrid_row = hybrid_lookup.get(sig, {})
     hybrid_score = min(100, int(round(float(hybrid_row.get("hybrid_score", 0)) * 2500)))
     odd = sum(n % 2 for n in nums)
     low = sum(n <= 25 for n in nums)
@@ -283,6 +283,7 @@ def build_wheeling_pool(ctx: dict, pool_size: int = 18) -> list[int]:
 def generate_tickets(e: pd.DataFrame, hybrid: pd.DataFrame, amount: int = 10, sample_size: int = 50000) -> pd.DataFrame:
     random.seed(f"pat-alyzer-{e.tail(1).iloc[0]['draw_date']}")
     ctx = build_context(e)
+    hybrid_lookup = hybrid.set_index("zone_signature").to_dict("index")
     targets = set(hybrid["zone_signature"])
     pool = build_wheeling_pool(ctx)
     combos = list(itertools.combinations(pool, 5))
@@ -298,7 +299,7 @@ def generate_tickets(e: pd.DataFrame, hybrid: pd.DataFrame, amount: int = 10, sa
         if key in seen:
             continue
         seen.add(key)
-        scored = score_ticket(nums, stars, hybrid, ctx)
+        scored = score_ticket(nums, stars, hybrid_lookup, ctx)
         if scored["duplicate_penalty"] >= 100:
             continue
         candidates.append(scored)
@@ -345,13 +346,13 @@ def parse_num_text(text: str) -> list[int]:
     return [int(v.strip()) for v in str(text).split(",") if v.strip().isdigit()]
 
 
-def backtest_generated_tickets(e: pd.DataFrame, test_window: int = 250, tickets_per_draw: int = 10) -> pd.DataFrame:
+def backtest_generated_tickets(e: pd.DataFrame, test_window: int = 60, tickets_per_draw: int = 10, sample_size: int = 2000) -> pd.DataFrame:
     rows = []
     start = max(250, len(e) - test_window)
     for i in range(start, len(e)):
         hist, actual = e.iloc[:i].copy(), e.iloc[i]
         hybrid = get_hybrid_target_signatures(hist)
-        tickets = generate_tickets(hist, hybrid, amount=tickets_per_draw, sample_size=10000)
+        tickets = generate_tickets(hist, hybrid, amount=tickets_per_draw, sample_size=sample_size)
         actual_nums = [int(actual[c]) for c in MAIN_COLS]
         actual_stars = [int(actual[c]) for c in STAR_COLS]
         best_main, best_stars, best_ticket = 0, 0, ""
@@ -418,3 +419,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
