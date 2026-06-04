@@ -273,6 +273,45 @@ def analyze_missing_zone_patterns(
     return result
 
 
+def get_hybrid_target_signatures(
+    enriched: pd.DataFrame,
+    recent_window: int = 50,
+    top_n: int = 10,
+    common_weight: float = 0.60,
+    missing_weight: float = 0.40,
+) -> pd.DataFrame:
+    historical_rates = enriched["zone_signature"].value_counts(normalize=True)
+    recent_rates = enriched.tail(recent_window)["zone_signature"].value_counts(normalize=True)
+
+    signatures = sorted(set(historical_rates.index).union(set(recent_rates.index)))
+
+    rows = []
+
+    for signature in signatures:
+        historical_rate = float(historical_rates.get(signature, 0))
+        recent_rate = float(recent_rates.get(signature, 0))
+        missing_score = max(0.0, historical_rate - recent_rate)
+
+        hybrid_score = (
+            common_weight * historical_rate
+            + missing_weight * missing_score
+        )
+
+        rows.append(
+            {
+                "zone_signature": signature,
+                "historical_rate": round(historical_rate, 4),
+                "recent_rate": round(recent_rate, 4),
+                "missing_score": round(missing_score, 4),
+                "hybrid_score": round(hybrid_score, 6),
+            }
+        )
+
+    result = pd.DataFrame(rows).sort_values("hybrid_score", ascending=False)
+    result.to_csv(PROCESSED_DIR / "hybrid_zone_patterns.csv", index=False)
+
+    return result.head(top_n)
+
 def generate_candidate_ticket(target_signatures: list[str]) -> dict:
     for _ in range(20000):
         main_numbers = sorted(random.sample(range(1, 51), 5))
@@ -579,11 +618,12 @@ def main() -> None:
 
     enriched = add_pattern_columns(draws)
     missing_patterns = analyze_missing_zone_patterns(enriched)
-    tickets = generate_tickets(missing_patterns)
+    hybrid_patterns = get_hybrid_target_signatures(enriched)
+    tickets = generate_tickets(hybrid_patterns)
 
     backtest_summary = backtest_missing_pattern_strategy(enriched)
 
-    generate_html_dashboard(enriched, missing_patterns, tickets, backtest_summary)
+    generate_html_dashboard(enriched, missing_patterns, tickets, backtest_summary, hybrid_patterns)
 
     summary = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
@@ -602,6 +642,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+
 
 
 
