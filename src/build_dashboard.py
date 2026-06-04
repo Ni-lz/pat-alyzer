@@ -351,6 +351,12 @@ def backtest_missing_pattern_strategy(
     if len(enriched) <= training_window + 1:
         return pd.DataFrame()
 
+    hybrid_weights = {
+        "Hybrid 70 common / 30 missing": (0.70, 0.30),
+        "Hybrid 60 common / 40 missing": (0.60, 0.40),
+        "Hybrid 50 common / 50 missing": (0.50, 0.50),
+    }
+
     for index in range(training_window, len(enriched)):
         history = enriched.iloc[:index]
         actual = enriched.iloc[index]
@@ -360,73 +366,104 @@ def backtest_missing_pattern_strategy(
 
         signatures = sorted(set(historical_rates.index).union(set(recent_rates.index)))
 
-        missing_scores = []
+        score_rows = []
 
         for signature in signatures:
             historical_rate = float(historical_rates.get(signature, 0))
             recent_rate = float(recent_rates.get(signature, 0))
-            missing_score = historical_rate - recent_rate
+            missing_score = max(0.0, historical_rate - recent_rate)
 
-            missing_scores.append(
-                {
-                    "zone_signature": signature,
-                    "missing_score": missing_score,
-                    "historical_rate": historical_rate,
-                }
-            )
+            score_row = {
+                "zone_signature": signature,
+                "historical_rate": historical_rate,
+                "recent_rate": recent_rate,
+                "missing_score": missing_score,
+            }
 
-        missing_df = pd.DataFrame(missing_scores).sort_values(
-            "missing_score",
-            ascending=False,
-        )
+            for hybrid_name, (common_weight, missing_weight) in hybrid_weights.items():
+                score_row[hybrid_name] = (
+                    common_weight * historical_rate
+                    + missing_weight * missing_score
+                )
 
-        common_signatures = (
-            history["zone_signature"]
-            .value_counts()
-            .head(top_n)
-            .index
+            score_rows.append(score_row)
+
+        scores_df = pd.DataFrame(score_rows)
+
+        predicted_missing_signatures = (
+            scores_df.sort_values("missing_score", ascending=False)
+            .head(top_n)["zone_signature"]
             .tolist()
         )
 
-        predicted_missing_signatures = missing_df.head(top_n)["zone_signature"].tolist()
+        common_signatures = (
+            scores_df.sort_values("historical_rate", ascending=False)
+            .head(top_n)["zone_signature"]
+            .tolist()
+        )
+
+        hybrid_predictions = {}
+
+        for hybrid_name in hybrid_weights:
+            hybrid_predictions[hybrid_name] = (
+                scores_df.sort_values(hybrid_name, ascending=False)
+                .head(top_n)["zone_signature"]
+                .tolist()
+            )
+
         actual_signature = actual["zone_signature"]
 
         unique_signature_count = max(1, history["zone_signature"].nunique())
         random_baseline_probability = min(1.0, top_n / unique_signature_count)
 
-        rows.append(
+        result_row = {
+            "draw_date": actual["draw_date"],
+            "actual_zone_signature": actual_signature,
+            "missing_strategy_hit": actual_signature in predicted_missing_signatures,
+            "common_strategy_hit": actual_signature in common_signatures,
+            "random_signature_baseline": random_baseline_probability,
+        }
+
+        for hybrid_name, predictions in hybrid_predictions.items():
+            result_row[hybrid_name] = actual_signature in predictions
+
+        rows.append(result_row)
+
+    result = pd.DataFrame(rows)
+    result.to_csv(PROCESSED_DIR / "backtest_results.csv", index=False)
+
+    summary_rows = [
+        {
+            "test_name": "Missing-pattern top zone signatures",
+            "draws_tested": len(result),
+            "hit_rate": round(float(result["missing_strategy_hit"].mean()), 4),
+        },
+        {
+            "test_name": "Most-common top zone signatures",
+            "draws_tested": len(result),
+            "hit_rate": round(float(result["common_strategy_hit"].mean()), 4),
+        },
+    ]
+
+    for hybrid_name in hybrid_weights:
+        summary_rows.append(
             {
-                "draw_date": actual["draw_date"],
-                "actual_zone_signature": actual_signature,
-                "missing_strategy_hit": actual_signature in predicted_missing_signatures,
-                "common_strategy_hit": actual_signature in common_signatures,
-                "random_signature_baseline": random_baseline_probability,
+                "test_name": hybrid_name,
+                "draws_tested": len(result),
+                "hit_rate": round(float(result[hybrid_name].mean()), 4),
             }
         )
 
-    result = pd.DataFrame(rows)
-
-    result.to_csv(PROCESSED_DIR / "backtest_results.csv", index=False)
-
-    summary = pd.DataFrame(
-        [
-            {
-                "test_name": "Missing-pattern top zone signatures",
-                "draws_tested": len(result),
-                "hit_rate": round(float(result["missing_strategy_hit"].mean()), 4),
-            },
-            {
-                "test_name": "Most-common top zone signatures",
-                "draws_tested": len(result),
-                "hit_rate": round(float(result["common_strategy_hit"].mean()), 4),
-            },
-            {
-                "test_name": "Random signature baseline estimate",
-                "draws_tested": len(result),
-                "hit_rate": round(float(result["random_signature_baseline"].mean()), 4),
-            },
-        ]
+    summary_rows.append(
+        {
+            "test_name": "Random signature baseline estimate",
+            "draws_tested": len(result),
+            "hit_rate": round(float(result["random_signature_baseline"].mean()), 4),
+        }
     )
+
+    summary = pd.DataFrame(summary_rows)
+    summary = summary.sort_values("hit_rate", ascending=False).reset_index(drop=True)
 
     summary.to_csv(PROCESSED_DIR / "backtest_summary.csv", index=False)
 
@@ -565,6 +602,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
 
