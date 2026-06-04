@@ -1,2 +1,2 @@
 status,note
-No drawn-order metadata loaded yet,"Metadata file exists, but no usable draw order rows were found."
+No usable drawn-order metadata loaded yet,"Metadata file exists, but drawn-order columns are empty or not usable yet."

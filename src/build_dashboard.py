@@ -401,6 +401,109 @@ def analyze_machine_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
 
     return result
 
+def analyze_drawn_order_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
+    required = ["draw_order_1", "draw_order_2", "draw_order_3", "draw_order_4", "draw_order_5"]
+
+    fallback = pd.DataFrame(
+        [
+            {
+                "status": "No usable drawn-order metadata loaded yet",
+                "note": "Metadata file exists, but drawn-order columns are empty or not usable yet.",
+            }
+        ]
+    )
+
+    if not all(column in enriched.columns for column in required):
+        fallback.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
+        return fallback
+
+    order_data = enriched.copy()
+
+    for column in required:
+        order_data[column] = pd.to_numeric(order_data[column], errors="coerce")
+
+    order_data = order_data.dropna(subset=required)
+
+    if order_data.empty:
+        fallback.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
+        return fallback
+
+    rows = []
+
+    for position, column in enumerate(required, start=1):
+        values = order_data[column].astype(int)
+
+        rows.append(
+            {
+                "draw_position": position,
+                "draw_count": int(values.count()),
+                "avg_number": round(float(values.mean()), 2),
+                "most_common_number": int(values.value_counts().idxmax()),
+                "low_number_rate": round(float((values <= 25).mean()), 4),
+                "high_number_rate": round(float((values > 25).mean()), 4),
+            }
+        )
+
+    result = pd.DataFrame(rows)
+    result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
+
+    return result
+
+
+def analyze_ball_set_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
+    fallback = pd.DataFrame(
+        [
+            {
+                "status": "No usable ball-set metadata loaded yet",
+                "note": "Metadata file exists, but no valid ball_set values were found. This is normal if the fetcher could not parse ball-set IDs from the public pages.",
+            }
+        ]
+    )
+
+    if "ball_set" not in enriched.columns:
+        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+        return fallback
+
+    ball_set_data = enriched.copy()
+    ball_set_data["ball_set"] = ball_set_data["ball_set"].fillna("").astype(str).str.strip()
+
+    invalid_values = {"", "nan", "none", "null", "not_found", "unknown", "n/a"}
+    ball_set_data = ball_set_data[
+        ~ball_set_data["ball_set"].str.lower().isin(invalid_values)
+    ].copy()
+
+    if ball_set_data.empty:
+        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+        return fallback
+
+    rows = []
+
+    for ball_set, group in ball_set_data.groupby("ball_set"):
+        if len(group) == 0:
+            continue
+
+        rows.append(
+            {
+                "ball_set": ball_set,
+                "draw_count": len(group),
+                "sample_warning": "OK" if len(group) >= 30 else "LOW SAMPLE",
+                "avg_main_sum": round(float(group["sum"].mean()), 2),
+                "avg_low_count": round(float(group["low_count"].mean()), 2),
+                "avg_high_count": round(float(group["high_count"].mean()), 2),
+                "most_common_zone": group["zone_signature"].value_counts().idxmax(),
+            }
+        )
+
+    if not rows:
+        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+        return fallback
+
+    result = pd.DataFrame(rows).sort_values("draw_count", ascending=False)
+    result.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+
+    return result
+
+
 def analyze_missing_zone_patterns(enriched: pd.DataFrame, recent_window: int = 50) -> pd.DataFrame:
     historical = enriched["zone_signature"].value_counts(normalize=True)
     recent = enriched.tail(recent_window)["zone_signature"].value_counts(normalize=True)
@@ -1116,200 +1219,6 @@ def metric_cards(items: list[tuple[str, str]]) -> str:
 
 
 
-def analyze_drawn_order_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
-    required = ["draw_order_1", "draw_order_2", "draw_order_3", "draw_order_4", "draw_order_5"]
-    if not all(column in enriched.columns for column in required):
-        result = pd.DataFrame([
-            {
-                "status": "No drawn-order metadata loaded yet",
-                "note": "Add draw_order_1..draw_order_5 to data/external/euromillions_machine_metadata.csv.",
-            }
-        ])
-        result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
-        return result
-
-    order_data = enriched.dropna(subset=required).copy()
-    for column in required:
-        order_data[column] = pd.to_numeric(order_data[column], errors="coerce")
-    order_data = order_data.dropna(subset=required)
-
-    if order_data.empty:
-        result = pd.DataFrame([
-            {
-                "status": "No drawn-order metadata loaded yet",
-                "note": "Metadata file exists, but no usable draw order rows were found.",
-            }
-        ])
-        result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
-        return result
-
-    rows = []
-    for column in required:
-        values = order_data[column].astype(int)
-        rows.append(
-            {
-                "draw_position": column,
-                "rows": len(values),
-                "avg_number": round(float(values.mean()), 2),
-                "most_common_number": int(values.value_counts().idxmax()),
-                "low_1_25_rate": round(float((values <= 25).mean()), 4),
-                "high_26_50_rate": round(float((values >= 26).mean()), 4),
-            }
-        )
-    result = pd.DataFrame(rows)
-    result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
-    return result
-
-
-def analyze_ball_set_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
-    fallback = pd.DataFrame(
-        [
-            {
-                "status": "No usable ball-set metadata loaded yet",
-                "note": "Metadata file exists, but no valid ball_set values were found. This is normal if the fetcher could not parse ball-set IDs from the public pages.",
-            }
-        ]
-    )
-
-    if "ball_set" not in enriched.columns:
-        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
-        return fallback
-
-    ball_set_data = enriched.copy()
-    ball_set_data["ball_set"] = ball_set_data["ball_set"].fillna("").astype(str).str.strip()
-
-    invalid_values = {"", "nan", "none", "null", "not_found", "unknown", "n/a"}
-    ball_set_data = ball_set_data[
-        ~ball_set_data["ball_set"].str.lower().isin(invalid_values)
-    ].copy()
-
-    if ball_set_data.empty:
-        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
-        return fallback
-
-    rows = []
-
-    for ball_set, group in ball_set_data.groupby("ball_set"):
-        if len(group) == 0:
-            continue
-
-        rows.append(
-            {
-                "ball_set": ball_set,
-                "draw_count": len(group),
-                "sample_warning": "OK" if len(group) >= 30 else "LOW SAMPLE",
-                "avg_main_sum": round(float(group["sum"].mean()), 2),
-                "avg_low_count": round(float(group["low_count"].mean()), 2),
-                "avg_high_count": round(float(group["high_count"].mean()), 2),
-                "most_common_zone": group["zone_signature"].value_counts().idxmax(),
-            }
-        )
-
-    if not rows:
-        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
-        return fallback
-
-    result = pd.DataFrame(rows).sort_values("draw_count", ascending=False)
-    result.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
-
-    return result
-def analyze_drawn_order_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
-    required = ["draw_order_1", "draw_order_2", "draw_order_3", "draw_order_4", "draw_order_5"]
-    if not all(column in enriched.columns for column in required):
-        result = pd.DataFrame([
-            {
-                "status": "No drawn-order metadata loaded yet",
-                "note": "Add draw_order_1..draw_order_5 to data/external/euromillions_machine_metadata.csv.",
-            }
-        ])
-        result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
-        return result
-
-    order_data = enriched.dropna(subset=required).copy()
-    for column in required:
-        order_data[column] = pd.to_numeric(order_data[column], errors="coerce")
-    order_data = order_data.dropna(subset=required)
-
-    if order_data.empty:
-        result = pd.DataFrame([
-            {
-                "status": "No drawn-order metadata loaded yet",
-                "note": "Metadata file exists, but no usable draw order rows were found.",
-            }
-        ])
-        result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
-        return result
-
-    rows = []
-    for column in required:
-        values = order_data[column].astype(int)
-        rows.append(
-            {
-                "draw_position": column,
-                "rows": len(values),
-                "avg_number": round(float(values.mean()), 2),
-                "most_common_number": int(values.value_counts().idxmax()),
-                "low_1_25_rate": round(float((values <= 25).mean()), 4),
-                "high_26_50_rate": round(float((values >= 26).mean()), 4),
-            }
-        )
-    result = pd.DataFrame(rows)
-    result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
-    return result
-
-
-def analyze_ball_set_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
-    fallback = pd.DataFrame(
-        [
-            {
-                "status": "No usable ball-set metadata loaded yet",
-                "note": "Metadata file exists, but no valid ball_set values were found. This is normal if the fetcher could not parse ball-set IDs from the public pages.",
-            }
-        ]
-    )
-
-    if "ball_set" not in enriched.columns:
-        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
-        return fallback
-
-    ball_set_data = enriched.copy()
-    ball_set_data["ball_set"] = ball_set_data["ball_set"].fillna("").astype(str).str.strip()
-
-    invalid_values = {"", "nan", "none", "null", "not_found", "unknown", "n/a"}
-    ball_set_data = ball_set_data[
-        ~ball_set_data["ball_set"].str.lower().isin(invalid_values)
-    ].copy()
-
-    if ball_set_data.empty:
-        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
-        return fallback
-
-    rows = []
-
-    for ball_set, group in ball_set_data.groupby("ball_set"):
-        if len(group) == 0:
-            continue
-
-        rows.append(
-            {
-                "ball_set": ball_set,
-                "draw_count": len(group),
-                "sample_warning": "OK" if len(group) >= 30 else "LOW SAMPLE",
-                "avg_main_sum": round(float(group["sum"].mean()), 2),
-                "avg_low_count": round(float(group["low_count"].mean()), 2),
-                "avg_high_count": round(float(group["high_count"].mean()), 2),
-                "most_common_zone": group["zone_signature"].value_counts().idxmax(),
-            }
-        )
-
-    if not rows:
-        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
-        return fallback
-
-    result = pd.DataFrame(rows).sort_values("draw_count", ascending=False)
-    result.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
-
-    return result
 def analyze_jackpot_context(financial_raw: pd.DataFrame, financial_summary: pd.DataFrame) -> pd.DataFrame:
     if financial_raw is None or financial_raw.empty:
         result = pd.DataFrame([
@@ -1771,5 +1680,6 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
 
