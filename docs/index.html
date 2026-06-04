@@ -46,7 +46,7 @@
       <div class="badge-row">
         <span class="badge">Era 3 diversified random</span><span class="badge">Rainbow zones</span><span class="badge">Deterministic tickets</span><span class="badge">Backtested baselines</span><span class="badge">Official CSV source</span>
       </div>
-      <div class="metrics"><div class='metric'><span>Latest draw</span><strong>2026-06-02</strong></div><div class='metric'><span>Numbers</span><strong>6, 9, 17, 18, 42 + 7, 9</strong></div><div class='metric'><span>Rainbow zone</span><strong>2-2-0-0-1</strong></div><div class='metric'><span>Draws analyzed</span><strong>1951</strong></div><div class='metric'><span>Best generated backtest</span><strong>Era 3 diversified random</strong></div><div class='metric'><span>Updated</span><strong>2026-06-04 18:31 UTC</strong></div></div>
+      <div class="metrics"><div class='metric'><span>Latest draw</span><strong>2026-06-02</strong></div><div class='metric'><span>Numbers</span><strong>6, 9, 17, 18, 42 + 7, 9</strong></div><div class='metric'><span>Rainbow zone</span><strong>2-2-0-0-1</strong></div><div class='metric'><span>Draws analyzed</span><strong>1951</strong></div><div class='metric'><span>Best generated backtest</span><strong>Era 3 diversified random</strong></div><div class='metric'><span>Updated</span><strong>2026-06-04 18:55 UTC</strong></div></div>
     </section>
 
     <section class="grid">
@@ -1158,6 +1158,176 @@
   </tbody>
 </table></div>
       </div>
+     
+      <div class="card half">
+  <h2>Machine deviation analysis</h2>
+  <p class="note">
+    Compares each draw machine against the available metadata baseline. This is exploratory only and does not prove physical bias.
+  </p>
+  <div class="table-wrap"><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>ball_machine</th>
+      <th>draw_count</th>
+      <th>sample_warning</th>
+      <th>avg_main_sum</th>
+      <th>baseline_avg_main_sum</th>
+      <th>sum_deviation</th>
+      <th>avg_low_count</th>
+      <th>baseline_avg_low_count</th>
+      <th>low_deviation</th>
+      <th>avg_high_count</th>
+      <th>baseline_avg_high_count</th>
+      <th>high_deviation</th>
+      <th>most_common_zone</th>
+      <th>baseline_most_common_zone</th>
+      <th>deviation_score</th>
+      <th>interpretation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>14</td>
+      <td>89</td>
+      <td>OK</td>
+      <td>133.35</td>
+      <td>128.9</td>
+      <td>4.45</td>
+      <td>2.38</td>
+      <td>2.48</td>
+      <td>-0.10</td>
+      <td>2.62</td>
+      <td>2.52</td>
+      <td>0.10</td>
+      <td>0-1-1-1-2</td>
+      <td>0-1-1-1-2</td>
+      <td>14.00</td>
+      <td>MILD deviation</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>75</td>
+      <td>OK</td>
+      <td>126.40</td>
+      <td>128.9</td>
+      <td>-2.50</td>
+      <td>2.57</td>
+      <td>2.48</td>
+      <td>0.09</td>
+      <td>2.43</td>
+      <td>2.52</td>
+      <td>-0.09</td>
+      <td>1-1-1-1-1</td>
+      <td>0-1-1-1-2</td>
+      <td>9.47</td>
+      <td>Normal range</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>86</td>
+      <td>OK</td>
+      <td>126.48</td>
+      <td>128.9</td>
+      <td>-2.42</td>
+      <td>2.51</td>
+      <td>2.48</td>
+      <td>0.03</td>
+      <td>2.49</td>
+      <td>2.52</td>
+      <td>-0.03</td>
+      <td>1-2-1-0-1</td>
+      <td>0-1-1-1-2</td>
+      <td>6.23</td>
+      <td>Normal range</td>
+    </tr>
+  </tbody>
+</table></div>
+</div>
+
+<div class="card half">
+  <h2>Ball-set deviation analysis</h2>
+  <p class="note">
+    Compares each ball set against the available metadata baseline. This is exploratory only and requires continued monitoring.
+  </p>
+  <div class="table-wrap"><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>ball_set</th>
+      <th>draw_count</th>
+      <th>sample_warning</th>
+      <th>avg_main_sum</th>
+      <th>baseline_avg_main_sum</th>
+      <th>sum_deviation</th>
+      <th>avg_low_count</th>
+      <th>baseline_avg_low_count</th>
+      <th>low_deviation</th>
+      <th>avg_high_count</th>
+      <th>baseline_avg_high_count</th>
+      <th>high_deviation</th>
+      <th>most_common_zone</th>
+      <th>baseline_most_common_zone</th>
+      <th>deviation_score</th>
+      <th>interpretation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>21</td>
+      <td>89</td>
+      <td>OK</td>
+      <td>123.52</td>
+      <td>128.9</td>
+      <td>-5.38</td>
+      <td>2.64</td>
+      <td>2.48</td>
+      <td>0.16</td>
+      <td>2.36</td>
+      <td>2.52</td>
+      <td>-0.16</td>
+      <td>1-2-0-1-1</td>
+      <td>0-1-1-1-2</td>
+      <td>18.59</td>
+      <td>MILD deviation</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>91</td>
+      <td>OK</td>
+      <td>132.51</td>
+      <td>128.9</td>
+      <td>3.61</td>
+      <td>2.41</td>
+      <td>2.48</td>
+      <td>-0.08</td>
+      <td>2.59</td>
+      <td>2.52</td>
+      <td>0.08</td>
+      <td>1-2-1-0-1</td>
+      <td>0-1-1-1-2</td>
+      <td>11.08</td>
+      <td>MILD deviation</td>
+    </tr>
+    <tr>
+      <td>19</td>
+      <td>70</td>
+      <td>OK</td>
+      <td>131.06</td>
+      <td>128.9</td>
+      <td>2.16</td>
+      <td>2.39</td>
+      <td>2.48</td>
+      <td>-0.10</td>
+      <td>2.61</td>
+      <td>2.52</td>
+      <td>0.10</td>
+      <td>0-1-1-1-2</td>
+      <td>0-1-1-1-2</td>
+      <td>9.23</td>
+      <td>Normal range</td>
+    </tr>
+  </tbody>
+</table></div>
+</div>
 
       <div class="card half">
         <h2>Ball-set metadata</h2>
@@ -1361,7 +1531,7 @@
   </thead>
   <tbody>
     <tr>
-      <td>2026-06-04T18:31:52.936244+00:00</td>
+      <td>2026-06-04T18:55:55.245521+00:00</td>
       <td>v7-exports-metadata-tracking</td>
       <td>2026-06-02</td>
       <td>1951</td>
@@ -1464,7 +1634,7 @@
         <p class="note">The score is a strategy-fit score, not a winning probability. Higher means the ticket matches the current tested rules better.</p>
       </div>
     </section>
-    <div class="footer">Pat-alyzer · generated from official public EuroMillions CSV data · 2026-06-04 18:31 UTC</div>
+    <div class="footer">Pat-alyzer · generated from official public EuroMillions CSV data · 2026-06-04 18:55 UTC</div>
   </main>
 </body>
 </html>

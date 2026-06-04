@@ -1,0 +1,4 @@
+ball_set,draw_count,sample_warning,avg_main_sum,baseline_avg_main_sum,sum_deviation,avg_low_count,baseline_avg_low_count,low_deviation,avg_high_count,baseline_avg_high_count,high_deviation,most_common_zone,baseline_most_common_zone,deviation_score,interpretation
+21,89,OK,123.52,128.9,-5.38,2.64,2.48,0.16,2.36,2.52,-0.16,1-2-0-1-1,0-1-1-1-2,18.59,MILD deviation
+20,91,OK,132.51,128.9,3.61,2.41,2.48,-0.08,2.59,2.52,0.08,1-2-1-0-1,0-1-1-1-2,11.08,MILD deviation
+19,70,OK,131.06,128.9,2.16,2.39,2.48,-0.1,2.61,2.52,0.1,0-1-1-1-2,0-1-1-1-2,9.23,Normal range
