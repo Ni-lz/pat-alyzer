@@ -349,37 +349,37 @@ def analyze_eras(enriched: pd.DataFrame) -> pd.DataFrame:
 
 
 def analyze_machine_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
-    if "ball_machine" not in enriched.columns:
-        result = pd.DataFrame(
-            [
-                {
-                    "status": "No machine metadata loaded yet",
-                    "note": "Add data/external/euromillions_machine_metadata.csv to enable machine analysis.",
-                }
-            ]
-        )
-        result.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
-        return result
+    fallback = pd.DataFrame(
+        [
+            {
+                "status": "No usable machine metadata loaded yet",
+                "note": "Metadata file exists, but no valid ball_machine values were found. This is normal if the fetcher could not parse machine IDs from the public pages.",
+            }
+        ]
+    )
 
-    machine_data = enriched[
-        enriched["ball_machine"].astype(str).str.strip() != ""
+    if "ball_machine" not in enriched.columns:
+        fallback.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
+        return fallback
+
+    machine_data = enriched.copy()
+    machine_data["ball_machine"] = machine_data["ball_machine"].fillna("").astype(str).str.strip()
+
+    invalid_values = {"", "nan", "none", "null", "not_found", "unknown", "n/a"}
+    machine_data = machine_data[
+        ~machine_data["ball_machine"].str.lower().isin(invalid_values)
     ].copy()
 
     if machine_data.empty:
-        result = pd.DataFrame(
-            [
-                {
-                    "status": "No machine metadata loaded yet",
-                    "note": "Add data/external/euromillions_machine_metadata.csv to enable machine analysis.",
-                }
-            ]
-        )
-        result.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
-        return result
+        fallback.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
+        return fallback
 
     rows = []
 
     for machine, group in machine_data.groupby("ball_machine"):
+        if len(group) == 0:
+            continue
+
         rows.append(
             {
                 "ball_machine": machine,
@@ -392,11 +392,14 @@ def analyze_machine_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
             }
         )
 
+    if not rows:
+        fallback.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
+        return fallback
+
     result = pd.DataFrame(rows).sort_values("draw_count", ascending=False)
     result.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
 
     return result
-
 
 def analyze_missing_zone_patterns(enriched: pd.DataFrame, recent_window: int = 50) -> pd.DataFrame:
     historical = enriched["zone_signature"].value_counts(normalize=True)
@@ -646,7 +649,7 @@ def generate_tickets(
     enriched: pd.DataFrame,
     hybrid: pd.DataFrame,
     amount: int = 10,
-    sample_size: int = 800,
+    sample_size: int = 2500,
     seed: str | int | None = None,
     strategy: str = "v2_scored",
 ) -> pd.DataFrame:
@@ -813,9 +816,9 @@ def evaluate_ticket_set(tickets: pd.DataFrame, actual_nums: set[int], actual_sta
 
 def backtest_generated_ticket_strategies(
     enriched: pd.DataFrame,
-    test_window: int = 40,
+    test_window: int = 60,
     tickets_per_draw: int = 10,
-    sample_size: int = 400,
+    sample_size: int = 1600,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     rows = []
     start = max(250, len(enriched) - test_window)
@@ -888,9 +891,9 @@ def backtest_generated_ticket_strategies(
 
 def backtest_era_training_modes(
     enriched: pd.DataFrame,
-    test_window: int = 40,
+    test_window: int = 60,
     tickets_per_draw: int = 10,
-    sample_size: int = 350,
+    sample_size: int = 1200,
 ) -> pd.DataFrame:
     rows = []
     start = max(250, len(enriched) - test_window)
@@ -993,9 +996,10 @@ def backtest_generated_ticket_windows(
     """
     era3_count = len(current_era_draws(enriched))
     windows = [
-        ("Last 30 draws", 30, 350),
-        ("Last 60 draws", 60, 300),
-        ("Last 100 draws", 100, 250),
+        ("Last 60 draws", 60, 1200),
+        ("Last 150 draws", 150, 800),
+        ("Last 250 draws", 250, 600),
+        ("Era 3 full", era3_count, 350),
     ]
 
     strategies = {
@@ -1079,9 +1083,10 @@ def backtest_generated_ticket_windows(
 
     summary = pd.DataFrame(summary_rows)
     window_order = {
-        "Last 30 draws": 1,
-        "Last 60 draws": 2,
-        "Last 100 draws": 3,
+        "Last 60 draws": 1,
+        "Last 150 draws": 2,
+        "Last 250 draws": 3,
+        "Era 3 full": 4,
     }
     summary["window_order"] = summary["window"].map(window_order)
     summary = summary.sort_values(
@@ -1109,6 +1114,341 @@ def metric_cards(items: list[tuple[str, str]]) -> str:
     )
 
 
+
+
+def analyze_drawn_order_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
+    required = ["draw_order_1", "draw_order_2", "draw_order_3", "draw_order_4", "draw_order_5"]
+    if not all(column in enriched.columns for column in required):
+        result = pd.DataFrame([
+            {
+                "status": "No drawn-order metadata loaded yet",
+                "note": "Add draw_order_1..draw_order_5 to data/external/euromillions_machine_metadata.csv.",
+            }
+        ])
+        result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
+        return result
+
+    order_data = enriched.dropna(subset=required).copy()
+    for column in required:
+        order_data[column] = pd.to_numeric(order_data[column], errors="coerce")
+    order_data = order_data.dropna(subset=required)
+
+    if order_data.empty:
+        result = pd.DataFrame([
+            {
+                "status": "No drawn-order metadata loaded yet",
+                "note": "Metadata file exists, but no usable draw order rows were found.",
+            }
+        ])
+        result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
+        return result
+
+    rows = []
+    for column in required:
+        values = order_data[column].astype(int)
+        rows.append(
+            {
+                "draw_position": column,
+                "rows": len(values),
+                "avg_number": round(float(values.mean()), 2),
+                "most_common_number": int(values.value_counts().idxmax()),
+                "low_1_25_rate": round(float((values <= 25).mean()), 4),
+                "high_26_50_rate": round(float((values >= 26).mean()), 4),
+            }
+        )
+    result = pd.DataFrame(rows)
+    result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
+    return result
+
+
+def analyze_ball_set_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
+    fallback = pd.DataFrame(
+        [
+            {
+                "status": "No usable ball-set metadata loaded yet",
+                "note": "Metadata file exists, but no valid ball_set values were found. This is normal if the fetcher could not parse ball-set IDs from the public pages.",
+            }
+        ]
+    )
+
+    if "ball_set" not in enriched.columns:
+        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+        return fallback
+
+    ball_set_data = enriched.copy()
+    ball_set_data["ball_set"] = ball_set_data["ball_set"].fillna("").astype(str).str.strip()
+
+    invalid_values = {"", "nan", "none", "null", "not_found", "unknown", "n/a"}
+    ball_set_data = ball_set_data[
+        ~ball_set_data["ball_set"].str.lower().isin(invalid_values)
+    ].copy()
+
+    if ball_set_data.empty:
+        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+        return fallback
+
+    rows = []
+
+    for ball_set, group in ball_set_data.groupby("ball_set"):
+        if len(group) == 0:
+            continue
+
+        rows.append(
+            {
+                "ball_set": ball_set,
+                "draw_count": len(group),
+                "sample_warning": "OK" if len(group) >= 30 else "LOW SAMPLE",
+                "avg_main_sum": round(float(group["sum"].mean()), 2),
+                "avg_low_count": round(float(group["low_count"].mean()), 2),
+                "avg_high_count": round(float(group["high_count"].mean()), 2),
+                "most_common_zone": group["zone_signature"].value_counts().idxmax(),
+            }
+        )
+
+    if not rows:
+        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+        return fallback
+
+    result = pd.DataFrame(rows).sort_values("draw_count", ascending=False)
+    result.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+
+    return result
+def analyze_drawn_order_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
+    required = ["draw_order_1", "draw_order_2", "draw_order_3", "draw_order_4", "draw_order_5"]
+    if not all(column in enriched.columns for column in required):
+        result = pd.DataFrame([
+            {
+                "status": "No drawn-order metadata loaded yet",
+                "note": "Add draw_order_1..draw_order_5 to data/external/euromillions_machine_metadata.csv.",
+            }
+        ])
+        result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
+        return result
+
+    order_data = enriched.dropna(subset=required).copy()
+    for column in required:
+        order_data[column] = pd.to_numeric(order_data[column], errors="coerce")
+    order_data = order_data.dropna(subset=required)
+
+    if order_data.empty:
+        result = pd.DataFrame([
+            {
+                "status": "No drawn-order metadata loaded yet",
+                "note": "Metadata file exists, but no usable draw order rows were found.",
+            }
+        ])
+        result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
+        return result
+
+    rows = []
+    for column in required:
+        values = order_data[column].astype(int)
+        rows.append(
+            {
+                "draw_position": column,
+                "rows": len(values),
+                "avg_number": round(float(values.mean()), 2),
+                "most_common_number": int(values.value_counts().idxmax()),
+                "low_1_25_rate": round(float((values <= 25).mean()), 4),
+                "high_26_50_rate": round(float((values >= 26).mean()), 4),
+            }
+        )
+    result = pd.DataFrame(rows)
+    result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
+    return result
+
+
+def analyze_ball_set_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
+    fallback = pd.DataFrame(
+        [
+            {
+                "status": "No usable ball-set metadata loaded yet",
+                "note": "Metadata file exists, but no valid ball_set values were found. This is normal if the fetcher could not parse ball-set IDs from the public pages.",
+            }
+        ]
+    )
+
+    if "ball_set" not in enriched.columns:
+        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+        return fallback
+
+    ball_set_data = enriched.copy()
+    ball_set_data["ball_set"] = ball_set_data["ball_set"].fillna("").astype(str).str.strip()
+
+    invalid_values = {"", "nan", "none", "null", "not_found", "unknown", "n/a"}
+    ball_set_data = ball_set_data[
+        ~ball_set_data["ball_set"].str.lower().isin(invalid_values)
+    ].copy()
+
+    if ball_set_data.empty:
+        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+        return fallback
+
+    rows = []
+
+    for ball_set, group in ball_set_data.groupby("ball_set"):
+        if len(group) == 0:
+            continue
+
+        rows.append(
+            {
+                "ball_set": ball_set,
+                "draw_count": len(group),
+                "sample_warning": "OK" if len(group) >= 30 else "LOW SAMPLE",
+                "avg_main_sum": round(float(group["sum"].mean()), 2),
+                "avg_low_count": round(float(group["low_count"].mean()), 2),
+                "avg_high_count": round(float(group["high_count"].mean()), 2),
+                "most_common_zone": group["zone_signature"].value_counts().idxmax(),
+            }
+        )
+
+    if not rows:
+        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+        return fallback
+
+    result = pd.DataFrame(rows).sort_values("draw_count", ascending=False)
+    result.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+
+    return result
+def analyze_jackpot_context(financial_raw: pd.DataFrame, financial_summary: pd.DataFrame) -> pd.DataFrame:
+    if financial_raw is None or financial_raw.empty:
+        result = pd.DataFrame([
+            {
+                "status": "No financial raw data loaded",
+                "note": "Financial CSV import is present, but no rows were parsed.",
+            }
+        ])
+        result.to_csv(PROCESSED_DIR / "jackpot_context_summary.csv", index=False)
+        return result
+
+    candidate_columns = [
+        column for column in financial_raw.columns
+        if any(token in str(column).lower() for token in ["jackpot", "amount", "bedrag", "prize", "prijs"])
+    ]
+
+    result = pd.DataFrame([
+        {
+            "status": "Financial weighting ready",
+            "source_rows": len(financial_raw),
+            "source_years": financial_raw.get("source_year", pd.Series(dtype=str)).nunique(),
+            "candidate_financial_columns": ", ".join(map(str, candidate_columns[:12])) if candidate_columns else "none detected",
+            "current_use": "Imported and summarized only; not used to change ticket odds until jackpot fields are normalized and backtested.",
+        }
+    ])
+    result.to_csv(PROCESSED_DIR / "jackpot_context_summary.csv", index=False)
+    return result
+
+
+def build_model_decision_summary(
+    enriched: pd.DataFrame,
+    tickets: pd.DataFrame,
+    generated_backtest_summary: pd.DataFrame,
+    windowed_backtest_summary: pd.DataFrame,
+) -> pd.DataFrame:
+    latest = enriched.tail(1).iloc[0]
+    best_strategy = "n/a"
+    if generated_backtest_summary is not None and not generated_backtest_summary.empty:
+        best_strategy = str(generated_backtest_summary.iloc[0].get("strategy", "n/a"))
+
+    era3_count = int((enriched["era_code"] == "era_3").sum()) if "era_code" in enriched.columns else 0
+    candidate_count = 0 if tickets is None or tickets.empty else len(tickets)
+
+    result = pd.DataFrame([
+        {
+            "active_model": "Era 3 diversified random",
+            "latest_draw_date": latest["draw_date"],
+            "training_scope": "All Era 3 / current-rule drawings",
+            "era3_training_draws": era3_count,
+            "candidate_tickets": candidate_count,
+            "best_recent_backtest_strategy": best_strategy,
+            "decision": "Use current-rule Era 3 data, mostly random generation, light sanity filters, duplicate avoidance, and star weighting.",
+            "caution": "Strategy-fit score is not a probability and does not guarantee prediction.",
+        }
+    ])
+    result.to_csv(PROCESSED_DIR / "model_decision_summary.csv", index=False)
+    return result
+
+
+def build_latest_result_summary(enriched: pd.DataFrame, tickets: pd.DataFrame) -> pd.DataFrame:
+    latest = enriched.tail(1).iloc[0]
+    actual_nums = {int(latest[column]) for column in MAIN_COLS}
+    actual_stars = {int(latest[column]) for column in STAR_COLS}
+
+    rows = []
+    if tickets is not None and not tickets.empty:
+        for index, ticket in tickets.reset_index(drop=True).iterrows():
+            nums = {int(x.strip()) for x in str(ticket["numbers"]).split(",")}
+            stars = {int(x.strip()) for x in str(ticket["stars"]).split(",")}
+            rows.append(
+                {
+                    "latest_draw_date": latest["draw_date"],
+                    "ticket_number": index + 1,
+                    "numbers": ticket["numbers"],
+                    "stars": ticket["stars"],
+                    "main_matches_against_latest_known_draw": len(nums & actual_nums),
+                    "star_matches_against_latest_known_draw": len(stars & actual_stars),
+                    "note": "This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.",
+                }
+            )
+    result = pd.DataFrame(rows)
+    result.to_csv(PROCESSED_DIR / "latest_result_ticket_check.csv", index=False)
+    return result
+
+
+def export_public_outputs(
+    tickets: pd.DataFrame,
+    model_decision_summary: pd.DataFrame,
+    latest_result_summary: pd.DataFrame,
+) -> None:
+    tickets.to_csv(DOCS_DIR / "candidate_tickets.csv", index=False)
+    (DOCS_DIR / "candidate_tickets.json").write_text(
+        tickets.to_json(orient="records", indent=2),
+        encoding="utf-8",
+    )
+    (DOCS_DIR / "model_summary.json").write_text(
+        model_decision_summary.to_json(orient="records", indent=2),
+        encoding="utf-8",
+    )
+    (DOCS_DIR / "latest_result_summary.json").write_text(
+        latest_result_summary.to_json(orient="records", indent=2),
+        encoding="utf-8",
+    )
+
+
+def update_model_version_history(summary: dict, model_decision_summary: pd.DataFrame) -> pd.DataFrame:
+    history_file = PROCESSED_DIR / "model_version_history.csv"
+    row = {
+        "updated_at": summary.get("updated_at"),
+        "version": summary.get("version"),
+        "latest_draw_date": summary.get("latest_draw_date"),
+        "draw_count": summary.get("draw_count"),
+        "active_model": model_decision_summary.iloc[0].get("active_model", "n/a") if not model_decision_summary.empty else "n/a",
+    }
+    if history_file.exists():
+        history = pd.read_csv(history_file, dtype=str)
+        history = pd.concat([history, pd.DataFrame([row])], ignore_index=True)
+        history = history.drop_duplicates(subset=["version", "latest_draw_date"], keep="last")
+    else:
+        history = pd.DataFrame([row])
+    history.to_csv(history_file, index=False)
+    return history.tail(20)
+
+
+def build_feature_roadmap() -> pd.DataFrame:
+    rows = [
+        {"feature": "Real machine / ball-set metadata", "status": "Ready for data", "note": "CSV support exists. Populate data/external/euromillions_machine_metadata.csv from a reliable source."},
+        {"feature": "Drawn-order metadata", "status": "Ready for data", "note": "Columns draw_order_1..draw_order_5 and star_order_1..star_order_2 are supported."},
+        {"feature": "Machine/set bias analysis", "status": "Implemented with sample warnings", "note": "Claims stay marked LOW SAMPLE until at least 30 draws per group."},
+        {"feature": "Heavy manual backtest workflow", "status": "Provided separately", "note": "Use .github/workflows/heavy-backtest.yml for manual long-running validation."},
+        {"feature": "Jackpot / financial weighting", "status": "Imported and summarized", "note": "Not used to modify ticket generation until jackpot fields are normalized and backtested."},
+        {"feature": "Cleaner ticket export", "status": "Implemented", "note": "Exports docs/candidate_tickets.csv and docs/candidate_tickets.json."},
+        {"feature": "Result auto-summary", "status": "Implemented", "note": "Exports docs/latest_result_summary.json after each build."},
+        {"feature": "Historical model version tracking", "status": "Implemented", "note": "Writes data/processed/model_version_history.csv."},
+    ]
+    result = pd.DataFrame(rows)
+    result.to_csv(PROCESSED_DIR / "feature_roadmap.csv", index=False)
+    return result
+
 def generate_html_dashboard(
     enriched: pd.DataFrame,
     missing_patterns: pd.DataFrame,
@@ -1121,6 +1461,13 @@ def generate_html_dashboard(
     machine_summary: pd.DataFrame,
     era_training_summary: pd.DataFrame,
     windowed_backtest_summary: pd.DataFrame,
+    ball_set_summary: pd.DataFrame,
+    drawn_order_summary: pd.DataFrame,
+    jackpot_context_summary: pd.DataFrame,
+    model_decision_summary: pd.DataFrame,
+    latest_result_summary: pd.DataFrame,
+    model_version_history: pd.DataFrame,
+    feature_roadmap: pd.DataFrame,
 ) -> None:
     latest = enriched.tail(1).iloc[0]
     hot_numbers = (
@@ -1206,6 +1553,19 @@ def generate_html_dashboard(
       </div>
 
       <div class="card half">
+        <h2>Model decision summary</h2>
+        <p class="note">Clear explanation of the currently active model and why it is used.</p>
+        <div class="table-wrap">{table_html(model_decision_summary)}</div>
+        <p class="note"><a href="candidate_tickets.csv">Download tickets CSV</a> · <a href="candidate_tickets.json">Download tickets JSON</a> · <a href="model_summary.json">Model summary JSON</a></p>
+      </div>
+
+      <div class="card half">
+        <h2>Result auto-summary</h2>
+        <p class="note">Latest generated-ticket check against the latest known draw for tracking only.</p>
+        <div class="table-wrap">{table_html(latest_result_summary.head(10))}</div>
+      </div>
+
+      <div class="card half">
         <h2>Strategy comparison backtest</h2>
         <p class="note">Compares Era 3 diversified random, Pat-alyzer v2, random, hybrid-zone-only, and most-common-zone ticket generation over recent historical draws.</p>
         <div class="table-wrap">{table_html(generated_backtest_summary)}</div>
@@ -1213,7 +1573,7 @@ def generate_html_dashboard(
 
       <div class="card">
         <h2>Backtest window robustness check</h2>
-        <p class="note">Compares the same generated-ticket strategies across the last 30, 60, and 100 draw windows. Larger full-era backtests should be run manually, not in the scheduled free GitHub Action.</p>
+        <p class="note">Compares the same generated-ticket strategies across the last 60, 150, 250, and full Era 3 draw windows. Larger windows use a smaller sample size to keep the free GitHub Action fast.</p>
         <div class="table-wrap">{table_html(windowed_backtest_summary)}</div>
       </div>
 
@@ -1257,6 +1617,36 @@ def generate_html_dashboard(
         <div class="table-wrap">{table_html(machine_summary)}</div>
       </div>
 
+      <div class="card half">
+        <h2>Ball-set metadata</h2>
+        <p class="note">Ball-set analysis is only meaningful when enough samples exist per set.</p>
+        <div class="table-wrap">{table_html(ball_set_summary)}</div>
+      </div>
+
+      <div class="card half">
+        <h2>Drawn-order metadata</h2>
+        <p class="note">Uses draw_order_1..5 when available. Sorted results alone cannot provide this.</p>
+        <div class="table-wrap">{table_html(drawn_order_summary)}</div>
+      </div>
+
+      <div class="card half">
+        <h2>Jackpot / financial context</h2>
+        <p class="note">Financial files are imported. Jackpot weighting remains informational until fields are normalized and backtested.</p>
+        <div class="table-wrap">{table_html(jackpot_context_summary)}</div>
+      </div>
+
+      <div class="card half">
+        <h2>Feature roadmap</h2>
+        <p class="note">Current implementation status for requested advanced features.</p>
+        <div class="table-wrap">{table_html(feature_roadmap)}</div>
+      </div>
+
+      <div class="card">
+        <h2>Historical model version tracking</h2>
+        <p class="note">Tracks model version and latest draw date across builds.</p>
+        <div class="table-wrap">{table_html(model_version_history)}</div>
+      </div>
+
       <div class="card third">
         <h2>Hot main numbers</h2>
         <div class="table-wrap">{table_html(hot_numbers)}</div>
@@ -1283,7 +1673,7 @@ def main() -> None:
     ensure_folders()
     fetch_official_csvs()
 
-    _, financial_summary = normalize_financialdata()
+    financial_raw, financial_summary = normalize_financialdata()
 
     draws = normalize_gamedata()
 
@@ -1311,6 +1701,10 @@ def main() -> None:
 
     era_summary = analyze_eras(enriched)
     machine_summary = analyze_machine_metadata(enriched)
+    ball_set_summary = analyze_ball_set_metadata(enriched)
+    drawn_order_summary = analyze_drawn_order_metadata(enriched)
+    jackpot_context_summary = analyze_jackpot_context(financial_raw, financial_summary)
+    feature_roadmap = build_feature_roadmap()
 
     latest_date = str(enriched.tail(1).iloc[0]["draw_date"])
 
@@ -1328,6 +1722,24 @@ def main() -> None:
     era_training_summary = backtest_era_training_modes(enriched)
     _, windowed_backtest_summary = backtest_generated_ticket_windows(enriched)
 
+    model_decision_summary = build_model_decision_summary(
+        enriched,
+        tickets,
+        generated_backtest_summary,
+        windowed_backtest_summary,
+    )
+    latest_result_summary = build_latest_result_summary(enriched, tickets)
+    export_public_outputs(tickets, model_decision_summary, latest_result_summary)
+
+    summary = {
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "draw_count": int(len(enriched)),
+        "latest_draw_date": latest_date,
+        "version": "v7-exports-metadata-tracking",
+    }
+
+    model_version_history = update_model_version_history(summary, model_decision_summary)
+
     generate_html_dashboard(
         enriched,
         missing_patterns,
@@ -1340,14 +1752,14 @@ def main() -> None:
         machine_summary,
         era_training_summary,
         windowed_backtest_summary,
+        ball_set_summary,
+        drawn_order_summary,
+        jackpot_context_summary,
+        model_decision_summary,
+        latest_result_summary,
+        model_version_history,
+        feature_roadmap,
     )
-
-    summary = {
-        "updated_at": datetime.now(timezone.utc).isoformat(),
-        "draw_count": int(len(enriched)),
-        "latest_draw_date": latest_date,
-        "version": "v6-window-robustness",
-    }
 
     (DOCS_DIR / "summary.json").write_text(
         json.dumps(summary, indent=2),

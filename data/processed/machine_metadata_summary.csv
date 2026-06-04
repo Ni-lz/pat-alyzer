@@ -1,2 +1,2 @@
 status,note
-No machine metadata loaded yet,Add data/external/euromillions_machine_metadata.csv to enable machine analysis.
+No usable machine metadata loaded yet,"Metadata file exists, but no valid ball_machine values were found. This is normal if the fetcher could not parse machine IDs from the public pages."

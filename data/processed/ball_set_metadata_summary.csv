@@ -1,0 +1,2 @@
+status,note
+No usable ball-set metadata loaded yet,"Metadata file exists, but no valid ball_set values were found. This is normal if the fetcher could not parse ball-set IDs from the public pages."

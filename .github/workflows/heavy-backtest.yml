@@ -1,0 +1,40 @@
+name: Heavy Pat-alyzer backtest
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  heavy-backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run normal build first
+        run: python src/build_dashboard.py
+
+      - name: Store heavy-backtest marker
+        run: |
+          mkdir -p reports
+          date -u +"heavy_backtest_completed_at=%Y-%m-%dT%H:%M:%SZ" > reports/heavy-backtest-run.txt
+
+      - name: Commit heavy backtest outputs
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Update heavy Pat-alyzer backtest outputs"
+          git push
