@@ -1723,6 +1723,7 @@ def generate_html_dashboard(
     </section>
     <div class="footer">Pat-alyzer · generated from official public EuroMillions CSV data · {updated_at}</div>
   </main>
+  <script src="played_tracker.js"></script>
 </body>
 </html>"""
     (DOCS_DIR / "index.html").write_text(html_text, encoding="utf-8")
@@ -1836,3 +1837,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
