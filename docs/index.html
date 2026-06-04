@@ -46,7 +46,7 @@
       <div class="badge-row">
         <span class="badge">Era 3 diversified random</span><span class="badge">Rainbow zones</span><span class="badge">Deterministic tickets</span><span class="badge">Backtested baselines</span><span class="badge">Official CSV source</span>
       </div>
-      <div class="metrics"><div class='metric'><span>Latest draw</span><strong>2026-06-02</strong></div><div class='metric'><span>Numbers</span><strong>6, 9, 17, 18, 42 + 7, 9</strong></div><div class='metric'><span>Rainbow zone</span><strong>2-2-0-0-1</strong></div><div class='metric'><span>Draws analyzed</span><strong>1951</strong></div><div class='metric'><span>Best generated backtest</span><strong>Era 3 diversified random</strong></div><div class='metric'><span>Updated</span><strong>2026-06-04 14:46 UTC</strong></div></div>
+      <div class="metrics"><div class='metric'><span>Latest draw</span><strong>2026-06-02</strong></div><div class='metric'><span>Numbers</span><strong>6, 9, 17, 18, 42 + 7, 9</strong></div><div class='metric'><span>Rainbow zone</span><strong>2-2-0-0-1</strong></div><div class='metric'><span>Draws analyzed</span><strong>1951</strong></div><div class='metric'><span>Best generated backtest</span><strong>Era 3 diversified random</strong></div><div class='metric'><span>Updated</span><strong>2026-06-04 16:08 UTC</strong></div></div>
     </section>
 
     <section class="grid">
@@ -249,6 +249,148 @@
       </div>
 
       <div class="card half">
+        <h2>Model decision summary</h2>
+        <p class="note">Clear explanation of the currently active model and why it is used.</p>
+        <div class="table-wrap"><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>active_model</th>
+      <th>latest_draw_date</th>
+      <th>training_scope</th>
+      <th>era3_training_draws</th>
+      <th>candidate_tickets</th>
+      <th>best_recent_backtest_strategy</th>
+      <th>decision</th>
+      <th>caution</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Era 3 diversified random</td>
+      <td>2026-06-02</td>
+      <td>All Era 3 / current-rule drawings</td>
+      <td>1011</td>
+      <td>10</td>
+      <td>Era 3 diversified random</td>
+      <td>Use current-rule Era 3 data, mostly random generation, light sanity filters, duplicate avoidance, and star weighting.</td>
+      <td>Strategy-fit score is not a probability and does not guarantee prediction.</td>
+    </tr>
+  </tbody>
+</table></div>
+        <p class="note"><a href="candidate_tickets.csv">Download tickets CSV</a> · <a href="candidate_tickets.json">Download tickets JSON</a> · <a href="model_summary.json">Model summary JSON</a></p>
+      </div>
+
+      <div class="card half">
+        <h2>Result auto-summary</h2>
+        <p class="note">Latest generated-ticket check against the latest known draw for tracking only.</p>
+        <div class="table-wrap"><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>latest_draw_date</th>
+      <th>ticket_number</th>
+      <th>numbers</th>
+      <th>stars</th>
+      <th>main_matches_against_latest_known_draw</th>
+      <th>star_matches_against_latest_known_draw</th>
+      <th>note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2026-06-02</td>
+      <td>1</td>
+      <td>15, 20, 33, 49, 50</td>
+      <td>3, 8</td>
+      <td>0</td>
+      <td>0</td>
+      <td>This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.</td>
+    </tr>
+    <tr>
+      <td>2026-06-02</td>
+      <td>2</td>
+      <td>12, 21, 39, 42, 43</td>
+      <td>8, 10</td>
+      <td>1</td>
+      <td>0</td>
+      <td>This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.</td>
+    </tr>
+    <tr>
+      <td>2026-06-02</td>
+      <td>3</td>
+      <td>11, 12, 35, 48, 50</td>
+      <td>9, 11</td>
+      <td>0</td>
+      <td>1</td>
+      <td>This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.</td>
+    </tr>
+    <tr>
+      <td>2026-06-02</td>
+      <td>4</td>
+      <td>11, 24, 36, 37, 40</td>
+      <td>7, 9</td>
+      <td>0</td>
+      <td>2</td>
+      <td>This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.</td>
+    </tr>
+    <tr>
+      <td>2026-06-02</td>
+      <td>5</td>
+      <td>5, 15, 32, 47, 48</td>
+      <td>5, 8</td>
+      <td>0</td>
+      <td>0</td>
+      <td>This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.</td>
+    </tr>
+    <tr>
+      <td>2026-06-02</td>
+      <td>6</td>
+      <td>3, 8, 39, 40, 46</td>
+      <td>9, 12</td>
+      <td>0</td>
+      <td>1</td>
+      <td>This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.</td>
+    </tr>
+    <tr>
+      <td>2026-06-02</td>
+      <td>7</td>
+      <td>11, 24, 38, 42, 49</td>
+      <td>6, 8</td>
+      <td>1</td>
+      <td>0</td>
+      <td>This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.</td>
+    </tr>
+    <tr>
+      <td>2026-06-02</td>
+      <td>8</td>
+      <td>6, 15, 45, 48, 49</td>
+      <td>6, 8</td>
+      <td>1</td>
+      <td>0</td>
+      <td>This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.</td>
+    </tr>
+    <tr>
+      <td>2026-06-02</td>
+      <td>9</td>
+      <td>7, 13, 34, 48, 50</td>
+      <td>4, 7</td>
+      <td>0</td>
+      <td>1</td>
+      <td>This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.</td>
+    </tr>
+    <tr>
+      <td>2026-06-02</td>
+      <td>10</td>
+      <td>7, 8, 35, 43, 48</td>
+      <td>3, 11</td>
+      <td>0</td>
+      <td>0</td>
+      <td>This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.</td>
+    </tr>
+  </tbody>
+</table></div>
+      </div>
+
+      <div class="card half">
         <h2>Strategy comparison backtest</h2>
         <p class="note">Compares Era 3 diversified random, Pat-alyzer v2, random, hybrid-zone-only, and most-common-zone ticket generation over recent historical draws.</p>
         <div class="table-wrap"><table border="1" class="dataframe data-table">
@@ -266,48 +408,48 @@
   <tbody>
     <tr>
       <td>Era 3 diversified random</td>
-      <td>40</td>
-      <td>1.475</td>
-      <td>1.100</td>
-      <td>0.450</td>
-      <td>0.025</td>
-      <td>0.200</td>
-    </tr>
-    <tr>
-      <td>Pat-alyzer v2 scored</td>
-      <td>40</td>
-      <td>1.275</td>
-      <td>1.100</td>
-      <td>0.375</td>
-      <td>0.000</td>
-      <td>0.200</td>
-    </tr>
-    <tr>
-      <td>Hybrid-zone only</td>
-      <td>40</td>
-      <td>1.250</td>
-      <td>1.200</td>
-      <td>0.300</td>
-      <td>0.025</td>
-      <td>0.175</td>
+      <td>60</td>
+      <td>1.5000</td>
+      <td>1.1167</td>
+      <td>0.4833</td>
+      <td>0.0167</td>
+      <td>0.2000</td>
     </tr>
     <tr>
       <td>Pure random</td>
-      <td>40</td>
-      <td>1.375</td>
-      <td>1.075</td>
-      <td>0.400</td>
-      <td>0.000</td>
-      <td>0.125</td>
+      <td>60</td>
+      <td>1.4000</td>
+      <td>1.1000</td>
+      <td>0.3833</td>
+      <td>0.0500</td>
+      <td>0.1833</td>
     </tr>
     <tr>
       <td>Most-common-zone only</td>
-      <td>40</td>
-      <td>1.175</td>
-      <td>1.150</td>
-      <td>0.325</td>
-      <td>0.000</td>
-      <td>0.125</td>
+      <td>60</td>
+      <td>1.1833</td>
+      <td>1.2167</td>
+      <td>0.3000</td>
+      <td>0.0333</td>
+      <td>0.1833</td>
+    </tr>
+    <tr>
+      <td>Hybrid-zone only</td>
+      <td>60</td>
+      <td>1.1667</td>
+      <td>1.1333</td>
+      <td>0.3000</td>
+      <td>0.0167</td>
+      <td>0.1833</td>
+    </tr>
+    <tr>
+      <td>Pat-alyzer v2 scored</td>
+      <td>60</td>
+      <td>1.1667</td>
+      <td>1.1333</td>
+      <td>0.2833</td>
+      <td>0.0167</td>
+      <td>0.1833</td>
     </tr>
   </tbody>
 </table></div>
@@ -315,7 +457,7 @@
 
       <div class="card">
         <h2>Backtest window robustness check</h2>
-        <p class="note">Compares the same generated-ticket strategies across the last 30, 60, and 100 draw windows. Larger full-era backtests should be run manually, not in the scheduled free GitHub Action.</p>
+        <p class="note">Compares the same generated-ticket strategies across the last 60, 150, 250, and full Era 3 draw windows. Larger windows use a smaller sample size to keep the free GitHub Action fast.</p>
         <div class="table-wrap"><table border="1" class="dataframe data-table">
   <thead>
     <tr style="text-align: right;">
@@ -332,169 +474,224 @@
   </thead>
   <tbody>
     <tr>
-      <td>Last 30 draws</td>
-      <td>Hybrid-zone only</td>
-      <td>30</td>
-      <td>350</td>
-      <td>1.2000</td>
-      <td>1.1333</td>
-      <td>0.3333</td>
-      <td>0.0000</td>
-      <td>0.2667</td>
-    </tr>
-    <tr>
-      <td>Last 30 draws</td>
+      <td>Last 60 draws</td>
       <td>Pure random</td>
-      <td>30</td>
-      <td>350</td>
-      <td>1.3667</td>
-      <td>1.1667</td>
-      <td>0.3000</td>
-      <td>0.0333</td>
-      <td>0.1667</td>
-    </tr>
-    <tr>
-      <td>Last 30 draws</td>
-      <td>Era 3 diversified random</td>
-      <td>30</td>
-      <td>350</td>
-      <td>1.4667</td>
-      <td>1.1333</td>
+      <td>60</td>
+      <td>1200</td>
+      <td>1.4500</td>
+      <td>1.1833</td>
       <td>0.4333</td>
-      <td>0.0333</td>
-      <td>0.1333</td>
+      <td>0.0500</td>
+      <td>0.2333</td>
     </tr>
     <tr>
-      <td>Last 30 draws</td>
-      <td>Pat-alyzer v2 scored</td>
-      <td>30</td>
-      <td>350</td>
-      <td>1.2000</td>
+      <td>Last 60 draws</td>
+      <td>Era 3 diversified random</td>
+      <td>60</td>
+      <td>1200</td>
+      <td>1.5333</td>
+      <td>1.1333</td>
+      <td>0.4667</td>
+      <td>0.0667</td>
+      <td>0.2167</td>
+    </tr>
+    <tr>
+      <td>Last 60 draws</td>
+      <td>Hybrid-zone only</td>
+      <td>60</td>
+      <td>1200</td>
+      <td>1.2167</td>
       <td>1.0667</td>
       <td>0.3000</td>
-      <td>0.0000</td>
-      <td>0.1000</td>
-    </tr>
-    <tr>
-      <td>Last 30 draws</td>
-      <td>Most-common-zone only</td>
-      <td>30</td>
-      <td>350</td>
-      <td>1.2000</td>
-      <td>1.1667</td>
-      <td>0.3000</td>
-      <td>0.0000</td>
-      <td>0.0667</td>
-    </tr>
-    <tr>
-      <td>Last 60 draws</td>
-      <td>Pure random</td>
-      <td>60</td>
-      <td>300</td>
-      <td>1.5500</td>
-      <td>1.1333</td>
-      <td>0.5333</td>
-      <td>0.0500</td>
-      <td>0.2833</td>
-    </tr>
-    <tr>
-      <td>Last 60 draws</td>
-      <td>Era 3 diversified random</td>
-      <td>60</td>
-      <td>300</td>
-      <td>1.4667</td>
-      <td>1.1500</td>
-      <td>0.4333</td>
-      <td>0.0500</td>
-      <td>0.1833</td>
-    </tr>
-    <tr>
-      <td>Last 60 draws</td>
-      <td>Hybrid-zone only</td>
-      <td>60</td>
-      <td>300</td>
-      <td>1.3667</td>
-      <td>1.1667</td>
-      <td>0.4167</td>
-      <td>0.0333</td>
+      <td>0.0167</td>
       <td>0.1667</td>
     </tr>
     <tr>
       <td>Last 60 draws</td>
       <td>Most-common-zone only</td>
       <td>60</td>
-      <td>300</td>
-      <td>1.3500</td>
+      <td>1200</td>
+      <td>1.2333</td>
       <td>1.0833</td>
-      <td>0.4500</td>
-      <td>0.0167</td>
-      <td>0.1667</td>
-    </tr>
-    <tr>
-      <td>Last 60 draws</td>
-      <td>Pat-alyzer v2 scored</td>
-      <td>60</td>
-      <td>300</td>
-      <td>1.3833</td>
-      <td>1.1667</td>
-      <td>0.4167</td>
-      <td>0.0167</td>
+      <td>0.3333</td>
+      <td>0.0333</td>
       <td>0.1500</td>
     </tr>
     <tr>
-      <td>Last 100 draws</td>
+      <td>Last 60 draws</td>
       <td>Pat-alyzer v2 scored</td>
-      <td>100</td>
-      <td>250</td>
-      <td>1.3800</td>
+      <td>60</td>
+      <td>1200</td>
+      <td>1.1833</td>
+      <td>1.1333</td>
+      <td>0.2667</td>
+      <td>0.0167</td>
+      <td>0.1000</td>
+    </tr>
+    <tr>
+      <td>Last 150 draws</td>
+      <td>Pat-alyzer v2 scored</td>
+      <td>150</td>
+      <td>800</td>
+      <td>1.3533</td>
       <td>1.1200</td>
-      <td>0.4300</td>
-      <td>0.0500</td>
-      <td>0.2500</td>
+      <td>0.4200</td>
+      <td>0.0533</td>
+      <td>0.2133</td>
     </tr>
     <tr>
-      <td>Last 100 draws</td>
-      <td>Era 3 diversified random</td>
-      <td>100</td>
-      <td>250</td>
-      <td>1.5200</td>
-      <td>1.1500</td>
-      <td>0.4900</td>
-      <td>0.0400</td>
-      <td>0.2300</td>
-    </tr>
-    <tr>
-      <td>Last 100 draws</td>
-      <td>Most-common-zone only</td>
-      <td>100</td>
-      <td>250</td>
-      <td>1.3000</td>
-      <td>1.1200</td>
-      <td>0.3800</td>
-      <td>0.0300</td>
-      <td>0.2200</td>
-    </tr>
-    <tr>
-      <td>Last 100 draws</td>
+      <td>Last 150 draws</td>
       <td>Hybrid-zone only</td>
-      <td>100</td>
-      <td>250</td>
-      <td>1.3300</td>
-      <td>1.1200</td>
-      <td>0.4000</td>
-      <td>0.0300</td>
-      <td>0.1900</td>
+      <td>150</td>
+      <td>800</td>
+      <td>1.2733</td>
+      <td>1.1133</td>
+      <td>0.3333</td>
+      <td>0.0467</td>
+      <td>0.1933</td>
     </tr>
     <tr>
-      <td>Last 100 draws</td>
+      <td>Last 150 draws</td>
       <td>Pure random</td>
-      <td>100</td>
-      <td>250</td>
-      <td>1.5000</td>
-      <td>1.0900</td>
-      <td>0.4500</td>
-      <td>0.0600</td>
+      <td>150</td>
+      <td>800</td>
+      <td>1.4733</td>
+      <td>1.1333</td>
+      <td>0.4333</td>
+      <td>0.0333</td>
+      <td>0.1800</td>
+    </tr>
+    <tr>
+      <td>Last 150 draws</td>
+      <td>Era 3 diversified random</td>
+      <td>150</td>
+      <td>800</td>
+      <td>1.5400</td>
+      <td>1.1600</td>
+      <td>0.4667</td>
+      <td>0.0733</td>
+      <td>0.1667</td>
+    </tr>
+    <tr>
+      <td>Last 150 draws</td>
+      <td>Most-common-zone only</td>
+      <td>150</td>
+      <td>800</td>
+      <td>1.2333</td>
+      <td>1.0933</td>
+      <td>0.3200</td>
+      <td>0.0400</td>
       <td>0.1600</td>
+    </tr>
+    <tr>
+      <td>Last 250 draws</td>
+      <td>Pure random</td>
+      <td>250</td>
+      <td>600</td>
+      <td>1.5080</td>
+      <td>1.1640</td>
+      <td>0.4640</td>
+      <td>0.0560</td>
+      <td>0.2120</td>
+    </tr>
+    <tr>
+      <td>Last 250 draws</td>
+      <td>Hybrid-zone only</td>
+      <td>250</td>
+      <td>600</td>
+      <td>1.3200</td>
+      <td>1.1320</td>
+      <td>0.3640</td>
+      <td>0.0480</td>
+      <td>0.2120</td>
+    </tr>
+    <tr>
+      <td>Last 250 draws</td>
+      <td>Era 3 diversified random</td>
+      <td>250</td>
+      <td>600</td>
+      <td>1.5080</td>
+      <td>1.1280</td>
+      <td>0.4840</td>
+      <td>0.0400</td>
+      <td>0.1760</td>
+    </tr>
+    <tr>
+      <td>Last 250 draws</td>
+      <td>Most-common-zone only</td>
+      <td>250</td>
+      <td>600</td>
+      <td>1.2960</td>
+      <td>1.1040</td>
+      <td>0.3680</td>
+      <td>0.0440</td>
+      <td>0.1600</td>
+    </tr>
+    <tr>
+      <td>Last 250 draws</td>
+      <td>Pat-alyzer v2 scored</td>
+      <td>250</td>
+      <td>600</td>
+      <td>1.2120</td>
+      <td>1.1200</td>
+      <td>0.3120</td>
+      <td>0.0320</td>
+      <td>0.1560</td>
+    </tr>
+    <tr>
+      <td>Era 3 full</td>
+      <td>Pure random</td>
+      <td>1011</td>
+      <td>350</td>
+      <td>1.5539</td>
+      <td>1.1227</td>
+      <td>0.5054</td>
+      <td>0.0593</td>
+      <td>0.2057</td>
+    </tr>
+    <tr>
+      <td>Era 3 full</td>
+      <td>Era 3 diversified random</td>
+      <td>1011</td>
+      <td>350</td>
+      <td>1.5509</td>
+      <td>1.1217</td>
+      <td>0.5025</td>
+      <td>0.0524</td>
+      <td>0.1939</td>
+    </tr>
+    <tr>
+      <td>Era 3 full</td>
+      <td>Pat-alyzer v2 scored</td>
+      <td>1011</td>
+      <td>350</td>
+      <td>1.3343</td>
+      <td>1.1345</td>
+      <td>0.3828</td>
+      <td>0.0346</td>
+      <td>0.1682</td>
+    </tr>
+    <tr>
+      <td>Era 3 full</td>
+      <td>Hybrid-zone only</td>
+      <td>1011</td>
+      <td>350</td>
+      <td>1.3046</td>
+      <td>1.1167</td>
+      <td>0.3531</td>
+      <td>0.0396</td>
+      <td>0.1642</td>
+    </tr>
+    <tr>
+      <td>Era 3 full</td>
+      <td>Most-common-zone only</td>
+      <td>1011</td>
+      <td>350</td>
+      <td>1.3175</td>
+      <td>1.1236</td>
+      <td>0.3699</td>
+      <td>0.0317</td>
+      <td>0.1622</td>
     </tr>
   </tbody>
 </table></div>
@@ -519,53 +716,53 @@
   <tbody>
     <tr>
       <td>Era 3 diversified random</td>
-      <td>40</td>
-      <td>990.5</td>
-      <td>1.475</td>
-      <td>1.125</td>
-      <td>0.475</td>
-      <td>0.025</td>
-      <td>0.225</td>
-    </tr>
-    <tr>
-      <td>Pure random baseline</td>
-      <td>40</td>
-      <td>1930.5</td>
-      <td>1.475</td>
-      <td>1.225</td>
-      <td>0.425</td>
-      <td>0.050</td>
-      <td>0.175</td>
+      <td>60</td>
+      <td>980.5</td>
+      <td>1.5000</td>
+      <td>1.1167</td>
+      <td>0.4833</td>
+      <td>0.0167</td>
+      <td>0.2000</td>
     </tr>
     <tr>
       <td>Era 3 only training</td>
-      <td>40</td>
-      <td>990.5</td>
-      <td>1.250</td>
-      <td>1.050</td>
-      <td>0.325</td>
-      <td>0.050</td>
-      <td>0.175</td>
-    </tr>
-    <tr>
-      <td>All-time training</td>
-      <td>40</td>
-      <td>1930.5</td>
-      <td>1.300</td>
-      <td>1.075</td>
-      <td>0.350</td>
-      <td>0.025</td>
-      <td>0.150</td>
+      <td>60</td>
+      <td>980.5</td>
+      <td>1.2500</td>
+      <td>1.1500</td>
+      <td>0.3333</td>
+      <td>0.0333</td>
+      <td>0.1833</td>
     </tr>
     <tr>
       <td>Recent 250 draws training</td>
-      <td>40</td>
+      <td>60</td>
       <td>250.0</td>
-      <td>1.150</td>
-      <td>1.125</td>
-      <td>0.225</td>
-      <td>0.050</td>
-      <td>0.100</td>
+      <td>1.1500</td>
+      <td>1.1167</td>
+      <td>0.2833</td>
+      <td>0.0333</td>
+      <td>0.1833</td>
+    </tr>
+    <tr>
+      <td>Pure random baseline</td>
+      <td>60</td>
+      <td>1920.5</td>
+      <td>1.4667</td>
+      <td>1.0833</td>
+      <td>0.5333</td>
+      <td>0.0167</td>
+      <td>0.1833</td>
+    </tr>
+    <tr>
+      <td>All-time training</td>
+      <td>60</td>
+      <td>1920.5</td>
+      <td>1.1667</td>
+      <td>1.2500</td>
+      <td>0.3000</td>
+      <td>0.0167</td>
+      <td>0.1833</td>
     </tr>
   </tbody>
 </table></div>
@@ -934,6 +1131,150 @@
 </table></div>
       </div>
 
+      <div class="card half">
+        <h2>Ball-set metadata</h2>
+        <p class="note">Ball-set analysis is only meaningful when enough samples exist per set.</p>
+        <div class="table-wrap"><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>status</th>
+      <th>note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>No ball-set metadata loaded yet</td>
+      <td>Metadata file exists, but no ball_set rows were found.</td>
+    </tr>
+  </tbody>
+</table></div>
+      </div>
+
+      <div class="card half">
+        <h2>Drawn-order metadata</h2>
+        <p class="note">Uses draw_order_1..5 when available. Sorted results alone cannot provide this.</p>
+        <div class="table-wrap"><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>status</th>
+      <th>note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>No drawn-order metadata loaded yet</td>
+      <td>Add draw_order_1..draw_order_5 to data/external/euromillions_machine_metadata.csv.</td>
+    </tr>
+  </tbody>
+</table></div>
+      </div>
+
+      <div class="card half">
+        <h2>Jackpot / financial context</h2>
+        <p class="note">Financial files are imported. Jackpot weighting remains informational until fields are normalized and backtested.</p>
+        <div class="table-wrap"><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>status</th>
+      <th>source_rows</th>
+      <th>source_years</th>
+      <th>candidate_financial_columns</th>
+      <th>current_use</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Financial weighting ready</td>
+      <td>1951</td>
+      <td>23</td>
+      <td>none detected</td>
+      <td>Imported and summarized only; not used to change ticket odds until jackpot fields are normalized and backtested.</td>
+    </tr>
+  </tbody>
+</table></div>
+      </div>
+
+      <div class="card half">
+        <h2>Feature roadmap</h2>
+        <p class="note">Current implementation status for requested advanced features.</p>
+        <div class="table-wrap"><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>feature</th>
+      <th>status</th>
+      <th>note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Real machine / ball-set metadata</td>
+      <td>Ready for data</td>
+      <td>CSV support exists. Populate data/external/euromillions_machine_metadata.csv from a reliable source.</td>
+    </tr>
+    <tr>
+      <td>Drawn-order metadata</td>
+      <td>Ready for data</td>
+      <td>Columns draw_order_1..draw_order_5 and star_order_1..star_order_2 are supported.</td>
+    </tr>
+    <tr>
+      <td>Machine/set bias analysis</td>
+      <td>Implemented with sample warnings</td>
+      <td>Claims stay marked LOW SAMPLE until at least 30 draws per group.</td>
+    </tr>
+    <tr>
+      <td>Heavy manual backtest workflow</td>
+      <td>Provided separately</td>
+      <td>Use .github/workflows/heavy-backtest.yml for manual long-running validation.</td>
+    </tr>
+    <tr>
+      <td>Jackpot / financial weighting</td>
+      <td>Imported and summarized</td>
+      <td>Not used to modify ticket generation until jackpot fields are normalized and backtested.</td>
+    </tr>
+    <tr>
+      <td>Cleaner ticket export</td>
+      <td>Implemented</td>
+      <td>Exports docs/candidate_tickets.csv and docs/candidate_tickets.json.</td>
+    </tr>
+    <tr>
+      <td>Result auto-summary</td>
+      <td>Implemented</td>
+      <td>Exports docs/latest_result_summary.json after each build.</td>
+    </tr>
+    <tr>
+      <td>Historical model version tracking</td>
+      <td>Implemented</td>
+      <td>Writes data/processed/model_version_history.csv.</td>
+    </tr>
+  </tbody>
+</table></div>
+      </div>
+
+      <div class="card">
+        <h2>Historical model version tracking</h2>
+        <p class="note">Tracks model version and latest draw date across builds.</p>
+        <div class="table-wrap"><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>updated_at</th>
+      <th>version</th>
+      <th>latest_draw_date</th>
+      <th>draw_count</th>
+      <th>active_model</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2026-06-04T16:08:24.578332+00:00</td>
+      <td>v7-exports-metadata-tracking</td>
+      <td>2026-06-02</td>
+      <td>1951</td>
+      <td>Era 3 diversified random</td>
+    </tr>
+  </tbody>
+</table></div>
+      </div>
+
       <div class="card third">
         <h2>Hot main numbers</h2>
         <div class="table-wrap"><table border="1" class="dataframe data-table">
@@ -1027,7 +1368,7 @@
         <p class="note">The score is a strategy-fit score, not a winning probability. Higher means the ticket matches the current tested rules better.</p>
       </div>
     </section>
-    <div class="footer">Pat-alyzer · generated from official public EuroMillions CSV data · 2026-06-04 14:46 UTC</div>
+    <div class="footer">Pat-alyzer · generated from official public EuroMillions CSV data · 2026-06-04 16:08 UTC</div>
   </main>
 </body>
 </html>
