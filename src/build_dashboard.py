@@ -513,6 +513,7 @@ def generate_html_dashboard(
     missing_patterns: pd.DataFrame,
     tickets: pd.DataFrame,
     backtest_summary: pd.DataFrame,
+    hybrid_patterns: pd.DataFrame,
 ) -> None:
     latest = enriched.tail(1).iloc[0]
     top_patterns = missing_patterns.head(10)
