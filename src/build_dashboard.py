@@ -1197,6 +1197,124 @@ def analyze_ball_set_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
     result.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
     return result
 
+def build_group_deviation_summary(
+    enriched: pd.DataFrame,
+    group_column: str,
+    output_file: str,
+) -> pd.DataFrame:
+    required_columns = {
+        group_column,
+        "sum",
+        "low_count",
+        "high_count",
+        "zone_signature",
+    }
+
+    if not required_columns.issubset(set(enriched.columns)):
+        result = pd.DataFrame(
+            [
+                {
+                    "status": f"No usable {group_column} metadata loaded yet",
+                    "note": "Required metadata columns are missing.",
+                }
+            ]
+        )
+        result.to_csv(PROCESSED_DIR / output_file, index=False)
+        return result
+
+    data = enriched.copy()
+    data[group_column] = data[group_column].fillna("").astype(str).str.strip()
+
+    invalid_values = {"", "nan", "none", "null", "not_found", "unknown", "n/a"}
+    data = data[~data[group_column].str.lower().isin(invalid_values)].copy()
+
+    if data.empty:
+        result = pd.DataFrame(
+            [
+                {
+                    "status": f"No usable {group_column} metadata loaded yet",
+                    "note": "Metadata file exists, but no usable group values were found.",
+                }
+            ]
+        )
+        result.to_csv(PROCESSED_DIR / output_file, index=False)
+        return result
+
+    baseline_avg_sum = float(data["sum"].mean())
+    baseline_avg_low = float(data["low_count"].mean())
+    baseline_avg_high = float(data["high_count"].mean())
+    baseline_zone = data["zone_signature"].value_counts().idxmax()
+
+    rows = []
+
+    for group_value, group in data.groupby(group_column):
+        draw_count = len(group)
+
+        avg_sum = float(group["sum"].mean())
+        avg_low = float(group["low_count"].mean())
+        avg_high = float(group["high_count"].mean())
+        most_common_zone = group["zone_signature"].value_counts().idxmax()
+
+        sum_deviation = avg_sum - baseline_avg_sum
+        low_deviation = avg_low - baseline_avg_low
+        high_deviation = avg_high - baseline_avg_high
+
+        deviation_score = (
+            abs(sum_deviation) * 2.0
+            + abs(low_deviation) * 25.0
+            + abs(high_deviation) * 25.0
+        )
+
+        if draw_count < 30:
+            interpretation = "LOW SAMPLE - do not trust"
+        elif deviation_score >= 20:
+            interpretation = "WATCH - larger deviation"
+        elif deviation_score >= 10:
+            interpretation = "MILD deviation"
+        else:
+            interpretation = "Normal range"
+
+        rows.append(
+            {
+                group_column: group_value,
+                "draw_count": draw_count,
+                "sample_warning": "OK" if draw_count >= 30 else "LOW SAMPLE",
+                "avg_main_sum": round(avg_sum, 2),
+                "baseline_avg_main_sum": round(baseline_avg_sum, 2),
+                "sum_deviation": round(sum_deviation, 2),
+                "avg_low_count": round(avg_low, 2),
+                "baseline_avg_low_count": round(baseline_avg_low, 2),
+                "low_deviation": round(low_deviation, 2),
+                "avg_high_count": round(avg_high, 2),
+                "baseline_avg_high_count": round(baseline_avg_high, 2),
+                "high_deviation": round(high_deviation, 2),
+                "most_common_zone": most_common_zone,
+                "baseline_most_common_zone": baseline_zone,
+                "deviation_score": round(deviation_score, 2),
+                "interpretation": interpretation,
+            }
+        )
+
+    result = pd.DataFrame(rows).sort_values("deviation_score", ascending=False)
+    result.to_csv(PROCESSED_DIR / output_file, index=False)
+
+    return result
+
+
+def analyze_machine_deviation(enriched: pd.DataFrame) -> pd.DataFrame:
+    return build_group_deviation_summary(
+        enriched=enriched,
+        group_column="ball_machine",
+        output_file="machine_deviation_summary.csv",
+    )
+
+
+def analyze_ball_set_deviation(enriched: pd.DataFrame) -> pd.DataFrame:
+    return build_group_deviation_summary(
+        enriched=enriched,
+        group_column="ball_set",
+        output_file="ball_set_deviation_summary.csv",
+    )
 
 def analyze_jackpot_context(financial_raw: pd.DataFrame, financial_summary: pd.DataFrame) -> pd.DataFrame:
     if financial_raw is None or financial_raw.empty:
@@ -1356,6 +1474,8 @@ def generate_html_dashboard(
     latest_result_summary: pd.DataFrame,
     model_version_history: pd.DataFrame,
     feature_roadmap: pd.DataFrame,
+    machine_deviation_summary: pd.DataFrame,
+    ball_set_deviation_summary: pd.DataFrame,
 ) -> None:
     latest = enriched.tail(1).iloc[0]
     hot_numbers = (
@@ -1504,6 +1624,22 @@ def generate_html_dashboard(
         <p class="note">Optional post-draw analysis. Machine or ball-set claims require enough samples before being trusted.</p>
         <div class="table-wrap">{table_html(machine_summary)}</div>
       </div>
+     
+      <div class="card half">
+  <h2>Machine deviation analysis</h2>
+  <p class="note">
+    Compares each draw machine against the available metadata baseline. This is exploratory only and does not prove physical bias.
+  </p>
+  <div class="table-wrap">{table_html(machine_deviation_summary)}</div>
+</div>
+
+<div class="card half">
+  <h2>Ball-set deviation analysis</h2>
+  <p class="note">
+    Compares each ball set against the available metadata baseline. This is exploratory only and requires continued monitoring.
+  </p>
+  <div class="table-wrap">{table_html(ball_set_deviation_summary)}</div>
+</div>
 
       <div class="card half">
         <h2>Ball-set metadata</h2>
@@ -1591,6 +1727,10 @@ def main() -> None:
     machine_summary = analyze_machine_metadata(enriched)
     ball_set_summary = analyze_ball_set_metadata(enriched)
     drawn_order_summary = analyze_drawn_order_metadata(enriched)
+    
+    machine_deviation_summary = analyze_machine_deviation(enriched)
+    ball_set_deviation_summary = analyze_ball_set_deviation(enriched)
+    
     jackpot_context_summary = analyze_jackpot_context(financial_raw, financial_summary)
     feature_roadmap = build_feature_roadmap()
 
@@ -1647,6 +1787,8 @@ def main() -> None:
         latest_result_summary,
         model_version_history,
         feature_roadmap,
+        machine_deviation_summary,
+        ball_set_deviation_summary,
     )
 
     (DOCS_DIR / "summary.json").write_text(
