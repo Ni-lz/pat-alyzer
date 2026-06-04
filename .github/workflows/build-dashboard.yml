@@ -1,0 +1,39 @@
+name: Build Pat-alyzer dashboard
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Tuesday and Friday at 22:30 UTC
+    # This is late evening in Belgium, after EuroMillions results are normally available.
+    - cron: "30 22 * * 2"
+    - cron: "30 22 * * 5"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build dashboard
+        run: python src/build_dashboard.py
+
+      - name: Commit generated files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add data docs reports
+          git diff --cached --quiet || git commit -m "Update Pat-alyzer dashboard"
+          git push
