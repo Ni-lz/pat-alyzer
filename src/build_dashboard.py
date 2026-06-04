@@ -1121,6 +1121,7 @@ def generate_html_dashboard(
     machine_summary: pd.DataFrame,
     era_training_summary: pd.DataFrame,
     windowed_backtest_summary: pd.DataFrame,
+    feature_roadmap: pd.DataFrame,
 ) -> None:
     latest = enriched.tail(1).iloc[0]
     hot_numbers = (
@@ -1197,6 +1198,21 @@ def generate_html_dashboard(
       </div>
       <div class="metrics">{hero_metrics}</div>
     </section>
+
+
+<div class="card half">
+  <h2>Current model decision</h2>
+  <p class="note">
+    The active generator is Era 3 diversified random. It uses all current-rule Era 3 drawings,
+    applies light sanity filters, avoids exact historical duplicates, and keeps randomness where the backtests show it matters.
+  </p>
+</div>
+
+<div class="card half">
+  <h2>Feature roadmap</h2>
+  <p class="note">Current missing or partially implemented features to improve the system further.</p>
+  <div class="table-wrap">{table_html(feature_roadmap)}</div>
+</div>
 
     <section class="grid">
       <div class="card">
@@ -1280,6 +1296,7 @@ def generate_html_dashboard(
 
 
 def main() -> None:
+    feature_roadmap = build_feature_roadmap()
     ensure_folders()
     fetch_official_csvs()
 
@@ -1303,44 +1320,87 @@ def main() -> None:
     enriched.to_csv(PROCESSED_DIR / "draws_enriched.csv", index=False)
 
     missing_patterns = analyze_missing_zone_patterns(enriched)
-    hybrid_patterns = get_hybrid_target_signatures(enriched)
-    current_era_data = current_era_draws(enriched)
-    if len(current_era_data) < 100:
-        current_era_data = enriched
-    current_era_hybrid_patterns = get_hybrid_target_signatures(current_era_data)
+ era3_training_data = current_era_draws(enriched)
 
-    era_summary = analyze_eras(enriched)
-    machine_summary = analyze_machine_metadata(enriched)
+if era3_training_data.empty:
+    era3_training_data = enriched.copy()
 
-    latest_date = str(enriched.tail(1).iloc[0]["draw_date"])
+hybrid_patterns = get_hybrid_target_signatures(era3_training_data)
 
-    tickets = generate_tickets(
-        current_era_data,
-        current_era_hybrid_patterns,
-        amount=10,
-        seed=f"{latest_date}:era3-diversified-random",
-        strategy="era3_diversified_random",
-    )
+latest_date = str(enriched.tail(1).iloc[0]["draw_date"])
+
+tickets = generate_tickets(
+    era3_training_data,
+    hybrid_patterns,
+    amount=10,
+    seed=latest_date,
+    strategy="era3_diversified_random",
+)
 
     zone_backtest = backtest_zone_strategy(enriched)
 
     _, generated_backtest_summary = backtest_generated_ticket_strategies(enriched)
     era_training_summary = backtest_era_training_modes(enriched)
     _, windowed_backtest_summary = backtest_generated_ticket_windows(enriched)
+def build_feature_roadmap() -> pd.DataFrame:
+    rows = [
+        {
+            "feature": "Machine and ball-set metadata import",
+            "status": "Ready for data",
+            "note": "CSV structure exists. Needs real machine/set draw data.",
+        },
+        {
+            "feature": "Drawn-order analysis",
+            "status": "Missing data",
+            "note": "Requires draw order per result, not only sorted numbers.",
+        },
+        {
+            "feature": "Machine/set bias testing",
+            "status": "Pending metadata",
+            "note": "Only meaningful with enough samples per machine or ball set.",
+        },
+        {
+            "feature": "Manual heavy backtest workflow",
+            "status": "Not built",
+            "note": "Should run separately from the scheduled free GitHub Action.",
+        },
+        {
+            "feature": "Jackpot/financial weighting",
+            "status": "Partially imported",
+            "note": "Financial CSVs are imported, but not yet used for strategy logic.",
+        },
+        {
+            "feature": "Result notification / auto-summary",
+            "status": "Not built",
+            "note": "Could publish latest model result after each draw.",
+        },
+        {
+            "feature": "Ticket export",
+            "status": "Not built",
+            "note": "Could export candidate tickets to CSV/JSON for easier use.",
+        },
+    ]
+
+    result = pd.DataFrame(rows)
+    result.to_csv(PROCESSED_DIR / "feature_roadmap.csv", index=False)
+
+    return result
+
 
     generate_html_dashboard(
-        enriched,
-        missing_patterns,
-        hybrid_patterns,
-        tickets,
-        zone_backtest,
-        generated_backtest_summary,
-        financial_summary,
-        era_summary,
-        machine_summary,
-        era_training_summary,
-        windowed_backtest_summary,
-    )
+    enriched,
+    missing_patterns,
+    hybrid_patterns,
+    tickets,
+    zone_backtest,
+    generated_backtest_summary,
+    financial_summary,
+    era_summary,
+    machine_summary,
+    era_training_summary,
+    windowed_backtest_summary,
+    feature_roadmap,
+)
 
     summary = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
