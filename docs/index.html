@@ -1,43 +1,8 @@
-
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Pat-alyzer - EuroMillions Pattern Analyzer</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 40px; background: #f7f7f7; color: #222; }
-    .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
-    table { border-collapse: collapse; width: 100%; }
-    th, td { padding: 8px 10px; border-bottom: 1px solid #ddd; text-align: left; }
-    th { background: #eee; }
-    .warning { color: #8a4b00; font-weight: bold; }
-    code { background: #eee; padding: 2px 4px; }
-  </style>
-</head>
-<body>
-  <h1>Pat-alyzer</h1>
-  <h2>EuroMillions Pattern Analyzer</h2>
-
-  <div class="card">
-    <h2>Important</h2>
-    <p class="warning">
-      This system analyzes historical structures and generates strategy-based candidate tickets.
-      It does not guarantee or truly predict winning numbers.
-    </p>
-  </div>
-
-  <div class="card">
-    <h2>Latest draw in dataset</h2>
-    <p><b>Date:</b> 2026-06-02</p>
-    <p><b>Numbers:</b> 6, 9, 17, 18, 42 + 7, 9</p>
-    <p><b>Rainbow / zone signature:</b> <code>2-2-0-0-1</code></p>
-    <p><b>Total draws analyzed:</b> 1951</p>
-    <p><b>Updated:</b> 2026-06-04 12:25 UTC</p>
-  </div>
-
-  <div class="card">
-    <h2>Missing / underrepresented rainbow-zone patterns</h2>
-    <table border="1" class="dataframe">
+<!doctype html><html><head><meta charset='utf-8'><title>Pat-alyzer</title><style>body{font-family:Arial,sans-serif;margin:40px;background:#f7f7f7;color:#222}.card{background:#fff;padding:20px;margin-bottom:20px;border-radius:10px;box-shadow:0 1px 4px #bbb}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:8px;border-bottom:1px solid #ddd;text-align:left;vertical-align:top}th{background:#eee}.warning{color:#8a4b00;font-weight:bold}code{background:#eee;padding:2px 4px}</style></head><body>
+<h1>Pat-alyzer</h1><h2>EuroMillions Pattern Analyzer</h2>
+<div class='card'><h2>Important</h2><p class='warning'>This analyzes historical structures and creates strategy-based candidate tickets. It does not guarantee or truly predict winning numbers.</p></div>
+<div class='card'><h2>Latest draw</h2><p><b>Date:</b> 2026-06-02</p><p><b>Numbers:</b> 6, 9, 17, 18, 42 + 7, 9</p><p><b>Rainbow zone:</b> <code>2-2-0-0-1</code></p><p><b>Draws analyzed:</b> 1951</p><p><b>Updated:</b> 2026-06-04 12:38 UTC</p></div>
+<div class='card'><h2>Missing rainbow-zone patterns</h2><table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
       <th>zone_signature</th>
@@ -108,158 +73,284 @@
       <td>0.0179</td>
     </tr>
   </tbody>
-</table>
-  </div>
-
-  <div class="card">
-    <h2>Generated candidate tickets</h2>
-    <table border="1" class="dataframe">
+</table></div>
+<div class='card'><h2>Hybrid 60/40 target patterns</h2><p>60% historical commonness + 40% recent underrepresentation.</p><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>zone_signature</th>
+      <th>historical_rate</th>
+      <th>recent_rate</th>
+      <th>missing_score</th>
+      <th>hybrid_score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1-1-1-1-1</td>
+      <td>0.0456</td>
+      <td>0.02</td>
+      <td>0.0256</td>
+      <td>0.037618</td>
+    </tr>
+    <tr>
+      <td>1-1-0-1-2</td>
+      <td>0.0246</td>
+      <td>0.00</td>
+      <td>0.0246</td>
+      <td>0.024603</td>
+    </tr>
+    <tr>
+      <td>1-0-1-2-1</td>
+      <td>0.0236</td>
+      <td>0.00</td>
+      <td>0.0236</td>
+      <td>0.023578</td>
+    </tr>
+    <tr>
+      <td>2-1-0-1-1</td>
+      <td>0.0215</td>
+      <td>0.00</td>
+      <td>0.0215</td>
+      <td>0.021527</td>
+    </tr>
+    <tr>
+      <td>1-2-1-0-1</td>
+      <td>0.0210</td>
+      <td>0.00</td>
+      <td>0.0210</td>
+      <td>0.021015</td>
+    </tr>
+    <tr>
+      <td>1-1-1-2-0</td>
+      <td>0.0210</td>
+      <td>0.00</td>
+      <td>0.0210</td>
+      <td>0.021015</td>
+    </tr>
+    <tr>
+      <td>2-1-1-1-0</td>
+      <td>0.0210</td>
+      <td>0.00</td>
+      <td>0.0210</td>
+      <td>0.021015</td>
+    </tr>
+    <tr>
+      <td>1-1-1-0-2</td>
+      <td>0.0200</td>
+      <td>0.00</td>
+      <td>0.0200</td>
+      <td>0.019990</td>
+    </tr>
+    <tr>
+      <td>1-1-0-2-1</td>
+      <td>0.0179</td>
+      <td>0.00</td>
+      <td>0.0179</td>
+      <td>0.017940</td>
+    </tr>
+    <tr>
+      <td>1-2-1-1-0</td>
+      <td>0.0179</td>
+      <td>0.00</td>
+      <td>0.0179</td>
+      <td>0.017940</td>
+    </tr>
+  </tbody>
+</table></div>
+<div class='card'><h2>Generated candidate tickets</h2><p>Stable per latest draw date. Uses wheeling pool, hybrid zones, pair/triplet scoring, gap scoring, star scoring, anti-crowd scoring, and duplicate avoidance.</p><table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
       <th>numbers</th>
       <th>stars</th>
       <th>zone_signature</th>
-      <th>odd_count</th>
-      <th>even_count</th>
-      <th>low_count</th>
-      <th>high_count</th>
-      <th>sum</th>
+      <th>hybrid_score</th>
+      <th>odd_even_score</th>
+      <th>low_high_score</th>
+      <th>sum_score</th>
+      <th>pair_score</th>
+      <th>triplet_score</th>
+      <th>gap_overdue_score</th>
+      <th>star_pattern_score</th>
       <th>anti_crowd_score</th>
-      <th>strategy_score</th>
+      <th>duplicate_penalty</th>
+      <th>final_strategy_score</th>
+      <th>why_selected</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>1, 18, 28, 32, 37</td>
-      <td>4, 9</td>
-      <td>1-1-1-2-0</td>
-      <td>2</td>
-      <td>3</td>
-      <td>2</td>
-      <td>3</td>
-      <td>116</td>
-      <td>20</td>
-      <td>90</td>
-    </tr>
-    <tr>
-      <td>10, 19, 38, 39, 47</td>
-      <td>2, 12</td>
-      <td>1-1-0-2-1</td>
-      <td>3</td>
-      <td>2</td>
-      <td>2</td>
-      <td>3</td>
-      <td>153</td>
-      <td>30</td>
-      <td>100</td>
-    </tr>
-    <tr>
-      <td>9, 17, 22, 40, 41</td>
-      <td>3, 9</td>
-      <td>1-1-1-1-1</td>
-      <td>3</td>
-      <td>2</td>
-      <td>3</td>
-      <td>2</td>
-      <td>129</td>
-      <td>20</td>
-      <td>90</td>
-    </tr>
-    <tr>
-      <td>1, 6, 18, 33, 43</td>
-      <td>1, 2</td>
-      <td>2-1-0-1-1</td>
-      <td>3</td>
-      <td>2</td>
-      <td>3</td>
-      <td>2</td>
-      <td>101</td>
-      <td>20</td>
-      <td>90</td>
-    </tr>
-    <tr>
-      <td>9, 14, 25, 40, 47</td>
-      <td>5, 10</td>
-      <td>1-1-1-1-1</td>
-      <td>3</td>
-      <td>2</td>
-      <td>3</td>
-      <td>2</td>
-      <td>135</td>
-      <td>20</td>
-      <td>90</td>
-    </tr>
-    <tr>
-      <td>1, 12, 23, 45, 46</td>
+      <td>7, 17, 24, 39, 50</td>
       <td>4, 10</td>
-      <td>1-1-1-0-2</td>
-      <td>3</td>
-      <td>2</td>
-      <td>3</td>
-      <td>2</td>
-      <td>127</td>
-      <td>20</td>
-      <td>90</td>
-    </tr>
-    <tr>
-      <td>8, 23, 33, 38, 45</td>
-      <td>4, 5</td>
-      <td>1-0-1-2-1</td>
-      <td>3</td>
-      <td>2</td>
-      <td>2</td>
-      <td>3</td>
-      <td>147</td>
-      <td>30</td>
-      <td>100</td>
-    </tr>
-    <tr>
-      <td>3, 10, 16, 27, 40</td>
-      <td>2, 3</td>
-      <td>2-1-1-1-0</td>
-      <td>2</td>
-      <td>3</td>
-      <td>3</td>
-      <td>2</td>
-      <td>96</td>
-      <td>10</td>
-      <td>80</td>
-    </tr>
-    <tr>
-      <td>9, 18, 19, 29, 40</td>
-      <td>7, 11</td>
-      <td>1-2-1-1-0</td>
-      <td>3</td>
-      <td>2</td>
-      <td>3</td>
-      <td>2</td>
-      <td>115</td>
-      <td>10</td>
-      <td>80</td>
-    </tr>
-    <tr>
-      <td>9, 12, 21, 32, 41</td>
-      <td>7, 8</td>
       <td>1-1-1-1-1</td>
-      <td>3</td>
-      <td>2</td>
-      <td>3</td>
-      <td>2</td>
-      <td>115</td>
+      <td>94</td>
+      <td>100</td>
+      <td>100</td>
+      <td>100</td>
+      <td>28</td>
+      <td>100</td>
+      <td>82</td>
+      <td>85</td>
+      <td>50</td>
+      <td>0</td>
+      <td>83</td>
+      <td>Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 137 | Avg gap 20.6 | Star zone 1-0-1 | No exact historical duplicate</td>
+    </tr>
+    <tr>
+      <td>7, 19, 24, 39, 50</td>
+      <td>4, 7</td>
+      <td>1-1-1-1-1</td>
+      <td>94</td>
+      <td>100</td>
+      <td>100</td>
+      <td>100</td>
+      <td>21</td>
+      <td>100</td>
+      <td>88</td>
+      <td>80</td>
+      <td>50</td>
+      <td>0</td>
+      <td>82</td>
+      <td>Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 139 | Avg gap 22.0 | Star zone 1-1-0 | No exact historical duplicate</td>
+    </tr>
+    <tr>
+      <td>7, 19, 24, 39, 44</td>
+      <td>8, 10</td>
+      <td>1-1-1-1-1</td>
+      <td>94</td>
+      <td>100</td>
+      <td>100</td>
+      <td>100</td>
+      <td>17</td>
+      <td>100</td>
+      <td>80</td>
+      <td>85</td>
+      <td>50</td>
+      <td>0</td>
+      <td>82</td>
+      <td>Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 133 | Avg gap 20.0 | Star zone 0-1-1 | No exact historical duplicate</td>
+    </tr>
+    <tr>
+      <td>7, 17, 24, 39, 42</td>
+      <td>10, 11</td>
+      <td>1-1-1-1-1</td>
+      <td>94</td>
+      <td>100</td>
+      <td>100</td>
+      <td>100</td>
+      <td>40</td>
+      <td>100</td>
+      <td>63</td>
+      <td>85</td>
+      <td>50</td>
+      <td>0</td>
+      <td>82</td>
+      <td>Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 129 | Avg gap 15.8 | Star zone 0-0-2 | No exact historical duplicate</td>
+    </tr>
+    <tr>
+      <td>7, 17, 24, 37, 50</td>
+      <td>4, 9</td>
+      <td>1-1-1-1-1</td>
+      <td>94</td>
+      <td>100</td>
+      <td>100</td>
+      <td>100</td>
+      <td>38</td>
+      <td>100</td>
+      <td>62</td>
+      <td>80</td>
+      <td>50</td>
+      <td>0</td>
+      <td>81</td>
+      <td>Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 135 | Avg gap 15.6 | Star zone 1-0-1 | No exact historical duplicate</td>
+    </tr>
+    <tr>
+      <td>7, 17, 24, 39, 44</td>
+      <td>4, 11</td>
+      <td>1-1-1-1-1</td>
+      <td>94</td>
+      <td>100</td>
+      <td>100</td>
+      <td>100</td>
+      <td>18</td>
+      <td>100</td>
+      <td>74</td>
+      <td>85</td>
+      <td>50</td>
+      <td>0</td>
+      <td>81</td>
+      <td>Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 131 | Avg gap 18.6 | Star zone 1-0-1 | No exact historical duplicate</td>
+    </tr>
+    <tr>
+      <td>10, 19, 21, 39, 50</td>
+      <td>1, 5</td>
+      <td>1-1-1-1-1</td>
+      <td>94</td>
+      <td>100</td>
+      <td>100</td>
+      <td>100</td>
       <td>20</td>
-      <td>90</td>
+      <td>100</td>
+      <td>80</td>
+      <td>80</td>
+      <td>50</td>
+      <td>0</td>
+      <td>81</td>
+      <td>Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 139 | Avg gap 20.0 | Star zone 1-1-0 | No exact historical duplicate</td>
+    </tr>
+    <tr>
+      <td>7, 19, 26, 39, 42</td>
+      <td>4, 8</td>
+      <td>1-1-1-1-1</td>
+      <td>94</td>
+      <td>100</td>
+      <td>100</td>
+      <td>100</td>
+      <td>33</td>
+      <td>100</td>
+      <td>50</td>
+      <td>85</td>
+      <td>50</td>
+      <td>0</td>
+      <td>80</td>
+      <td>Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 2/3 | Sum 133 | Avg gap 12.6 | Star zone 1-1-0 | No exact historical duplicate</td>
+    </tr>
+    <tr>
+      <td>7, 19, 24, 35, 50</td>
+      <td>1, 9</td>
+      <td>1-1-1-1-1</td>
+      <td>94</td>
+      <td>100</td>
+      <td>100</td>
+      <td>100</td>
+      <td>26</td>
+      <td>100</td>
+      <td>67</td>
+      <td>72</td>
+      <td>50</td>
+      <td>0</td>
+      <td>80</td>
+      <td>Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 135 | Avg gap 16.8 | Star zone 1-0-1 | No exact historical duplicate</td>
+    </tr>
+    <tr>
+      <td>7, 17, 24, 37, 44</td>
+      <td>3, 11</td>
+      <td>1-1-1-1-1</td>
+      <td>94</td>
+      <td>100</td>
+      <td>100</td>
+      <td>100</td>
+      <td>33</td>
+      <td>100</td>
+      <td>54</td>
+      <td>85</td>
+      <td>50</td>
+      <td>0</td>
+      <td>80</td>
+      <td>Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 129 | Avg gap 13.6 | Star zone 1-0-1 | No exact historical duplicate</td>
     </tr>
   </tbody>
-</table>
-  </div>
-
-  <div class="card">
-    <h2>Backtest summary</h2>
-    <p>
-      This checks whether the next historical draw matched one of the top predicted rainbow-zone signatures.
-      It validates the structure strategy, not jackpot-winning ticket accuracy.
-    </p>
-    <table border="1" class="dataframe">
+</table></div>
+<div class='card'><h2>Zone-signature backtest</h2><table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
       <th>test_name</th>
@@ -299,12 +390,114 @@
       <td>0.0913</td>
     </tr>
   </tbody>
-</table>
-  </div>
-
-  <div class="card">
-    <h2>Hot main numbers</h2>
-    <table border="1" class="dataframe">
+</table></div>
+<div class='card'><h2>Actual generated-ticket backtest</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>metric</th>
+      <th>value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>draws_tested</td>
+      <td>60.0000</td>
+    </tr>
+    <tr>
+      <td>avg_best_main_matches</td>
+      <td>1.1667</td>
+    </tr>
+    <tr>
+      <td>avg_best_star_matches</td>
+      <td>0.7333</td>
+    </tr>
+    <tr>
+      <td>hit_2_main_or_better_rate</td>
+      <td>0.2667</td>
+    </tr>
+    <tr>
+      <td>hit_3_main_or_better_rate</td>
+      <td>0.0167</td>
+    </tr>
+    <tr>
+      <td>hit_2_main_plus_1_star_or_better_rate</td>
+      <td>0.1167</td>
+    </tr>
+  </tbody>
+</table></div>
+<div class='card'><h2>Financial data import summary</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>source_year</th>
+      <th>rows</th>
+      <th>columns</th>
+      <th>source_file</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2017</td>
+      <td>104</td>
+      <td>31</td>
+      <td>euromillions-financialdata-NL-2017.csv</td>
+    </tr>
+    <tr>
+      <td>2018</td>
+      <td>104</td>
+      <td>31</td>
+      <td>euromillions-financialdata-NL-2018.csv</td>
+    </tr>
+    <tr>
+      <td>2019</td>
+      <td>105</td>
+      <td>31</td>
+      <td>euromillions-financialdata-NL-2019.csv</td>
+    </tr>
+    <tr>
+      <td>2020</td>
+      <td>104</td>
+      <td>31</td>
+      <td>euromillions-financialdata-NL-2020.csv</td>
+    </tr>
+    <tr>
+      <td>2021</td>
+      <td>105</td>
+      <td>31</td>
+      <td>euromillions-financialdata-NL-2021.csv</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>104</td>
+      <td>31</td>
+      <td>euromillions-financialdata-NL-2022.csv</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>104</td>
+      <td>31</td>
+      <td>euromillions-financialdata-NL-2023.csv</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>105</td>
+      <td>31</td>
+      <td>euromillions-financialdata-NL-2024.csv</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>104</td>
+      <td>31</td>
+      <td>euromillions-financialdata-NL-2025.csv</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>44</td>
+      <td>31</td>
+      <td>euromillions-financialdata-NL-2026.csv</td>
+    </tr>
+  </tbody>
+</table></div>
+<div class='card'><h2>Hot main numbers</h2><table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
       <th>number</th>
@@ -353,12 +546,8 @@
       <td>208</td>
     </tr>
   </tbody>
-</table>
-  </div>
-
-  <div class="card">
-    <h2>Hot stars</h2>
-    <table border="1" class="dataframe">
+</table></div>
+<div class='card'><h2>Hot stars</h2><table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
       <th>star</th>
@@ -387,7 +576,5 @@
       <td>351</td>
     </tr>
   </tbody>
-</table>
-  </div>
-</body>
-</html>
+</table></div>
+</body></html>

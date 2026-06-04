@@ -1,4 +1,4 @@
-draw_date,actual_zone_signature,missing_strategy_hit,common_strategy_hit,random_signature_baseline,Hybrid 70 common / 30 missing,Hybrid 60 common / 40 missing,Hybrid 50 common / 50 missing
+draw_date,actual_zone_signature,Missing-pattern top zone signatures,Most-common top zone signatures,Random signature baseline estimate,Hybrid 70 common / 30 missing,Hybrid 60 common / 40 missing,Hybrid 50 common / 50 missing
 2007-12-14,1-0-2-1-1,False,False,0.12658227848101267,False,False,False
 2007-12-21,2-0-1-1-1,False,False,0.12658227848101267,False,False,False
 2007-12-28,0-1-2-1-1,True,False,0.12658227848101267,False,False,False

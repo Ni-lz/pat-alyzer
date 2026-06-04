@@ -1,0 +1,7 @@
+metric,value
+draws_tested,60.0
+avg_best_main_matches,1.1667
+avg_best_star_matches,0.7333
+hit_2_main_or_better_rate,0.2667
+hit_3_main_or_better_rate,0.0167
+hit_2_main_plus_1_star_or_better_rate,0.1167
