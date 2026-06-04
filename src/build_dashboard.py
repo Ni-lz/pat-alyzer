@@ -76,6 +76,10 @@ def ensure_folders() -> None:
 
 
 def download_file(url: str, destination: Path) -> bool:
+    if destination.exists() and destination.stat().st_size > 0:
+        print(f"Using cached file: {destination}")
+        return True
+
     try:
         response = requests.get(url, timeout=30)
     except requests.RequestException as exc:
@@ -642,7 +646,7 @@ def generate_tickets(
     enriched: pd.DataFrame,
     hybrid: pd.DataFrame,
     amount: int = 10,
-    sample_size: int = 2500,
+    sample_size: int = 800,
     seed: str | int | None = None,
     strategy: str = "v2_scored",
 ) -> pd.DataFrame:
@@ -809,9 +813,9 @@ def evaluate_ticket_set(tickets: pd.DataFrame, actual_nums: set[int], actual_sta
 
 def backtest_generated_ticket_strategies(
     enriched: pd.DataFrame,
-    test_window: int = 60,
+    test_window: int = 40,
     tickets_per_draw: int = 10,
-    sample_size: int = 1600,
+    sample_size: int = 400,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     rows = []
     start = max(250, len(enriched) - test_window)
@@ -884,9 +888,9 @@ def backtest_generated_ticket_strategies(
 
 def backtest_era_training_modes(
     enriched: pd.DataFrame,
-    test_window: int = 60,
+    test_window: int = 40,
     tickets_per_draw: int = 10,
-    sample_size: int = 1200,
+    sample_size: int = 350,
 ) -> pd.DataFrame:
     rows = []
     start = max(250, len(enriched) - test_window)
@@ -978,6 +982,121 @@ def backtest_era_training_modes(
 
     return summary
 
+def backtest_generated_ticket_windows(
+    enriched: pd.DataFrame,
+    tickets_per_draw: int = 10,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Run generated-ticket backtests across multiple historical windows.
+
+    This is intentionally lighter for larger windows so GitHub Actions stays fast.
+    It is a robustness check, not a guaranteed predictor.
+    """
+    era3_count = len(current_era_draws(enriched))
+    windows = [
+        ("Last 30 draws", 30, 350),
+        ("Last 60 draws", 60, 300),
+        ("Last 100 draws", 100, 250),
+    ]
+
+    strategies = {
+        "Era 3 diversified random": "era3_diversified_random",
+        "Pat-alyzer v2 scored": "v2_scored",
+        "Hybrid-zone only": "hybrid_zone_only",
+        "Most-common-zone only": "common_zone_only",
+        "Pure random": "random",
+    }
+
+    rows = []
+
+    for window_label, test_window, sample_size in windows:
+        start = max(250, len(enriched) - test_window)
+
+        for index in range(start, len(enriched)):
+            history = enriched.iloc[:index]
+            actual = enriched.iloc[index]
+            actual_nums = {int(actual[col]) for col in MAIN_COLS}
+            actual_stars = {int(actual[col]) for col in STAR_COLS}
+
+            hybrid = get_hybrid_target_signatures(history)
+            common = common_zone_patterns(history)
+            era3_history = current_era_draws(history)
+            if len(era3_history) < 100:
+                era3_history = history
+            era3_hybrid = get_hybrid_target_signatures(era3_history)
+
+            for display_name, strategy in strategies.items():
+                if strategy == "common_zone_only":
+                    training_data = history
+                    pattern_source = common
+                    effective_strategy = "hybrid_zone_only"
+                elif strategy == "era3_diversified_random":
+                    training_data = era3_history
+                    pattern_source = era3_hybrid
+                    effective_strategy = strategy
+                else:
+                    training_data = history
+                    pattern_source = hybrid
+                    effective_strategy = strategy
+
+                tickets = generate_tickets(
+                    training_data,
+                    pattern_source,
+                    amount=tickets_per_draw,
+                    sample_size=sample_size,
+                    seed=f"{actual['draw_date']}:{window_label}:{display_name}",
+                    strategy=effective_strategy,
+                )
+
+                metrics = evaluate_ticket_set(tickets, actual_nums, actual_stars)
+                rows.append(
+                    {
+                        "window": window_label,
+                        "draw_date": actual["draw_date"],
+                        "strategy": display_name,
+                        "sample_size": sample_size,
+                        **metrics,
+                    }
+                )
+
+    results = pd.DataFrame(rows)
+    results.to_csv(PROCESSED_DIR / "generated_ticket_backtest_window_results.csv", index=False)
+
+    summary_rows = []
+    for (window_label, strategy_name), subset in results.groupby(["window", "strategy"]):
+        summary_rows.append(
+            {
+                "window": window_label,
+                "strategy": strategy_name,
+                "draws_tested": int(subset["draw_date"].nunique()),
+                "sample_size": int(subset["sample_size"].max()),
+                "avg_best_main_matches": round(float(subset["best_main_matches"].mean()), 4),
+                "avg_best_star_matches": round(float(subset["best_star_matches"].mean()), 4),
+                "hit_2_main_or_better_rate": round(float(subset["hit_2_main_or_better"].mean()), 4),
+                "hit_3_main_or_better_rate": round(float(subset["hit_3_main_or_better"].mean()), 4),
+                "hit_2_main_plus_1_star_or_better_rate": round(float(subset["hit_2_main_plus_1_star_or_better"].mean()), 4),
+            }
+        )
+
+    summary = pd.DataFrame(summary_rows)
+    window_order = {
+        "Last 30 draws": 1,
+        "Last 60 draws": 2,
+        "Last 100 draws": 3,
+    }
+    summary["window_order"] = summary["window"].map(window_order)
+    summary = summary.sort_values(
+        [
+            "window_order",
+            "hit_2_main_plus_1_star_or_better_rate",
+            "hit_3_main_or_better_rate",
+            "hit_2_main_or_better_rate",
+        ],
+        ascending=[True, False, False, False],
+    ).drop(columns=["window_order"])
+
+    summary.to_csv(PROCESSED_DIR / "generated_ticket_backtest_window_summary.csv", index=False)
+    return results, summary
+
 def table_html(df: pd.DataFrame, classes: str = "") -> str:
     if df is None or df.empty:
         return "<p class='muted'>No data available.</p>"
@@ -1001,6 +1120,7 @@ def generate_html_dashboard(
     era_summary: pd.DataFrame,
     machine_summary: pd.DataFrame,
     era_training_summary: pd.DataFrame,
+    windowed_backtest_summary: pd.DataFrame,
 ) -> None:
     latest = enriched.tail(1).iloc[0]
     hot_numbers = (
@@ -1089,6 +1209,12 @@ def generate_html_dashboard(
         <h2>Strategy comparison backtest</h2>
         <p class="note">Compares Era 3 diversified random, Pat-alyzer v2, random, hybrid-zone-only, and most-common-zone ticket generation over recent historical draws.</p>
         <div class="table-wrap">{table_html(generated_backtest_summary)}</div>
+      </div>
+
+      <div class="card">
+        <h2>Backtest window robustness check</h2>
+        <p class="note">Compares the same generated-ticket strategies across the last 30, 60, and 100 draw windows. Larger full-era backtests should be run manually, not in the scheduled free GitHub Action.</p>
+        <div class="table-wrap">{table_html(windowed_backtest_summary)}</div>
       </div>
 
       <div class="card half">
@@ -1200,6 +1326,7 @@ def main() -> None:
 
     _, generated_backtest_summary = backtest_generated_ticket_strategies(enriched)
     era_training_summary = backtest_era_training_modes(enriched)
+    _, windowed_backtest_summary = backtest_generated_ticket_windows(enriched)
 
     generate_html_dashboard(
         enriched,
@@ -1212,13 +1339,14 @@ def main() -> None:
         era_summary,
         machine_summary,
         era_training_summary,
+        windowed_backtest_summary,
     )
 
     summary = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "draw_count": int(len(enriched)),
         "latest_draw_date": latest_date,
-        "version": "v5-era3-diversified-random",
+        "version": "v6-window-robustness",
     }
 
     (DOCS_DIR / "summary.json").write_text(
@@ -1231,3 +1359,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
