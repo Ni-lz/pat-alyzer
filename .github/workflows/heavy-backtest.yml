@@ -1,15 +1,24 @@
-name: Heavy Pat-alyzer backtest
+name: Heavy Pat-alyzer analytics
 
 on:
   workflow_dispatch:
+    inputs:
+      metadata_limit:
+        description: "How many latest Era 3 draws to refresh metadata for. Use 0 for all Era 3."
+        required: true
+        default: "0"
+      pause_seconds:
+        description: "Pause between metadata requests."
+        required: true
+        default: "0.2"
 
 permissions:
   contents: write
 
 jobs:
-  heavy-backtest:
+  heavy-analytics:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
 
     steps:
       - name: Checkout repository
@@ -23,18 +32,24 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run normal build first
+      - name: Build official CSV baseline
         run: python src/build_dashboard.py
 
-      - name: Store heavy-backtest marker
+      - name: Refresh metadata incrementally
+        run: python tools/fetch_machine_metadata.py --limit "${{ github.event.inputs.metadata_limit }}" --pause "${{ github.event.inputs.pause_seconds }}" --incremental
+
+      - name: Rebuild dashboard with refreshed metadata
+        run: python src/build_dashboard.py
+
+      - name: Write run marker
         run: |
           mkdir -p reports
-          date -u +"heavy_backtest_completed_at=%Y-%m-%dT%H:%M:%SZ" > reports/heavy-backtest-run.txt
+          date -u +"heavy_analytics_completed_at=%Y-%m-%dT%H:%M:%SZ" > reports/heavy-analytics-run.txt
 
-      - name: Commit heavy backtest outputs
+      - name: Commit generated outputs
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add -A
-          git diff --cached --quiet || git commit -m "Update heavy Pat-alyzer backtest outputs"
+          git diff --cached --quiet || git commit -m "Update heavy Pat-alyzer analytics outputs"
           git push

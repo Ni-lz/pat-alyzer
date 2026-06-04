@@ -349,36 +349,29 @@ def analyze_eras(enriched: pd.DataFrame) -> pd.DataFrame:
 
 
 def analyze_machine_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
-    if "ball_machine" not in enriched.columns:
-        result = pd.DataFrame(
-            [
-                {
-                    "status": "No machine metadata loaded yet",
-                    "note": "Add data/external/euromillions_machine_metadata.csv to enable machine analysis.",
-                }
-            ]
-        )
-        result.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
-        return result
+    fallback = pd.DataFrame(
+        [
+            {
+                "status": "No usable machine metadata loaded yet",
+                "note": "Add usable ball_machine values to data/external/euromillions_machine_metadata.csv.",
+            }
+        ]
+    )
 
-    machine_data = enriched[
-        enriched["ball_machine"].astype(str).str.strip() != ""
-    ].copy()
+    if "ball_machine" not in enriched.columns:
+        fallback.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
+        return fallback
+
+    machine_data = enriched.copy()
+    machine_data["ball_machine"] = machine_data["ball_machine"].fillna("").astype(str).str.strip()
+    invalid_values = {"", "nan", "none", "null", "not_found", "unknown", "n/a"}
+    machine_data = machine_data[~machine_data["ball_machine"].str.lower().isin(invalid_values)].copy()
 
     if machine_data.empty:
-        result = pd.DataFrame(
-            [
-                {
-                    "status": "No machine metadata loaded yet",
-                    "note": "Add data/external/euromillions_machine_metadata.csv to enable machine analysis.",
-                }
-            ]
-        )
-        result.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
-        return result
+        fallback.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
+        return fallback
 
     rows = []
-
     for machine, group in machine_data.groupby("ball_machine"):
         rows.append(
             {
@@ -394,7 +387,6 @@ def analyze_machine_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
 
     result = pd.DataFrame(rows).sort_values("draw_count", ascending=False)
     result.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
-
     return result
 
 
@@ -1115,30 +1107,27 @@ def metric_cards(items: list[tuple[str, str]]) -> str:
 
 def analyze_drawn_order_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
     required = ["draw_order_1", "draw_order_2", "draw_order_3", "draw_order_4", "draw_order_5"]
-    if not all(column in enriched.columns for column in required):
-        result = pd.DataFrame([
+    fallback = pd.DataFrame(
+        [
             {
-                "status": "No drawn-order metadata loaded yet",
-                "note": "Add draw_order_1..draw_order_5 to data/external/euromillions_machine_metadata.csv.",
+                "status": "No usable drawn-order metadata loaded yet",
+                "note": "Add usable draw_order_1..draw_order_5 values to data/external/euromillions_machine_metadata.csv.",
             }
-        ])
-        result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
-        return result
+        ]
+    )
 
-    order_data = enriched.dropna(subset=required).copy()
+    if not all(column in enriched.columns for column in required):
+        fallback.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
+        return fallback
+
+    order_data = enriched.copy()
     for column in required:
         order_data[column] = pd.to_numeric(order_data[column], errors="coerce")
     order_data = order_data.dropna(subset=required)
 
     if order_data.empty:
-        result = pd.DataFrame([
-            {
-                "status": "No drawn-order metadata loaded yet",
-                "note": "Metadata file exists, but no usable draw order rows were found.",
-            }
-        ])
-        result.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
-        return result
+        fallback.to_csv(PROCESSED_DIR / "drawn_order_summary.csv", index=False)
+        return fallback
 
     rows = []
     for column in required:
@@ -1146,7 +1135,7 @@ def analyze_drawn_order_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
         rows.append(
             {
                 "draw_position": column,
-                "rows": len(values),
+                "rows": int(len(values)),
                 "avg_number": round(float(values.mean()), 2),
                 "most_common_number": int(values.value_counts().idxmax()),
                 "low_1_25_rate": round(float((values <= 25).mean()), 4),
@@ -1159,26 +1148,27 @@ def analyze_drawn_order_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
 
 
 def analyze_ball_set_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
-    if "ball_set" not in enriched.columns:
-        result = pd.DataFrame([
+    fallback = pd.DataFrame(
+        [
             {
-                "status": "No ball-set metadata loaded yet",
-                "note": "Add ball_set values to data/external/euromillions_machine_metadata.csv.",
+                "status": "No usable ball-set metadata loaded yet",
+                "note": "Add usable ball_set values to data/external/euromillions_machine_metadata.csv.",
             }
-        ])
-        result.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
-        return result
+        ]
+    )
 
-    ball_data = enriched[enriched["ball_set"].astype(str).str.strip() != ""].copy()
+    if "ball_set" not in enriched.columns:
+        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+        return fallback
+
+    ball_data = enriched.copy()
+    ball_data["ball_set"] = ball_data["ball_set"].fillna("").astype(str).str.strip()
+    invalid_values = {"", "nan", "none", "null", "not_found", "unknown", "n/a"}
+    ball_data = ball_data[~ball_data["ball_set"].str.lower().isin(invalid_values)].copy()
+
     if ball_data.empty:
-        result = pd.DataFrame([
-            {
-                "status": "No ball-set metadata loaded yet",
-                "note": "Metadata file exists, but no ball_set rows were found.",
-            }
-        ])
-        result.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
-        return result
+        fallback.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
+        return fallback
 
     rows = []
     for ball_set, group in ball_data.groupby("ball_set"):
@@ -1197,82 +1187,75 @@ def analyze_ball_set_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
     result.to_csv(PROCESSED_DIR / "ball_set_metadata_summary.csv", index=False)
     return result
 
-def build_group_deviation_summary(
+
+def normal_cdf(value: float) -> float:
+    return 0.5 * (1.0 + math.erf(value / math.sqrt(2.0)))
+
+
+def z_status(z_score: float, draw_count: int) -> str:
+    abs_z = abs(z_score)
+    if draw_count < 30:
+        return "LOW SAMPLE - do not trust"
+    if abs_z >= 2.58:
+        return "STRONG anomaly watch"
+    if abs_z >= 1.96:
+        return "NOTABLE anomaly watch"
+    if abs_z >= 1.50:
+        return "MILD watch"
+    return "Normal statistical range"
+
+
+def build_group_significance_summary(
     enriched: pd.DataFrame,
     group_column: str,
     output_file: str,
 ) -> pd.DataFrame:
-    required_columns = {
-        group_column,
-        "sum",
-        "low_count",
-        "high_count",
-        "zone_signature",
-    }
-
+    required_columns = {group_column, "sum", "low_count", "high_count", "zone_signature"}
     if not required_columns.issubset(set(enriched.columns)):
-        result = pd.DataFrame(
-            [
-                {
-                    "status": f"No usable {group_column} metadata loaded yet",
-                    "note": "Required metadata columns are missing.",
-                }
-            ]
-        )
+        result = pd.DataFrame([
+            {"status": f"No usable {group_column} metadata loaded yet", "note": "Required metadata columns are missing."}
+        ])
         result.to_csv(PROCESSED_DIR / output_file, index=False)
         return result
 
     data = enriched.copy()
     data[group_column] = data[group_column].fillna("").astype(str).str.strip()
-
     invalid_values = {"", "nan", "none", "null", "not_found", "unknown", "n/a"}
     data = data[~data[group_column].str.lower().isin(invalid_values)].copy()
 
     if data.empty:
-        result = pd.DataFrame(
-            [
-                {
-                    "status": f"No usable {group_column} metadata loaded yet",
-                    "note": "Metadata file exists, but no usable group values were found.",
-                }
-            ]
-        )
+        result = pd.DataFrame([
+            {"status": f"No usable {group_column} metadata loaded yet", "note": "Metadata file exists, but no usable group values were found."}
+        ])
         result.to_csv(PROCESSED_DIR / output_file, index=False)
         return result
 
     baseline_avg_sum = float(data["sum"].mean())
-    baseline_avg_low = float(data["low_count"].mean())
-    baseline_avg_high = float(data["high_count"].mean())
+    baseline_sum_std = float(data["sum"].std(ddof=1)) if len(data) > 1 else 0.0
+    baseline_low_rate = float(data["low_count"].sum() / (len(data) * 5))
+    baseline_high_rate = float(data["high_count"].sum() / (len(data) * 5))
     baseline_zone = data["zone_signature"].value_counts().idxmax()
 
     rows = []
-
     for group_value, group in data.groupby(group_column):
         draw_count = len(group)
-
         avg_sum = float(group["sum"].mean())
-        avg_low = float(group["low_count"].mean())
-        avg_high = float(group["high_count"].mean())
+        avg_low_count = float(group["low_count"].mean())
+        avg_high_count = float(group["high_count"].mean())
+        low_rate = float(group["low_count"].sum() / (draw_count * 5)) if draw_count else 0.0
+        high_rate = float(group["high_count"].sum() / (draw_count * 5)) if draw_count else 0.0
         most_common_zone = group["zone_signature"].value_counts().idxmax()
 
-        sum_deviation = avg_sum - baseline_avg_sum
-        low_deviation = avg_low - baseline_avg_low
-        high_deviation = avg_high - baseline_avg_high
+        sum_se = baseline_sum_std / math.sqrt(draw_count) if baseline_sum_std > 0 and draw_count > 0 else 0.0
+        sum_z = (avg_sum - baseline_avg_sum) / sum_se if sum_se else 0.0
+        sum_p_two_sided = max(0.0, min(1.0, 2.0 * (1.0 - normal_cdf(abs(sum_z)))))
 
-        deviation_score = (
-            abs(sum_deviation) * 2.0
-            + abs(low_deviation) * 25.0
-            + abs(high_deviation) * 25.0
-        )
+        low_n = draw_count * 5
+        low_se = math.sqrt(baseline_low_rate * (1.0 - baseline_low_rate) / low_n) if 0 < baseline_low_rate < 1 and low_n > 0 else 0.0
+        low_z = (low_rate - baseline_low_rate) / low_se if low_se else 0.0
+        low_p_two_sided = max(0.0, min(1.0, 2.0 * (1.0 - normal_cdf(abs(low_z)))))
 
-        if draw_count < 30:
-            interpretation = "LOW SAMPLE - do not trust"
-        elif deviation_score >= 20:
-            interpretation = "WATCH - larger deviation"
-        elif deviation_score >= 10:
-            interpretation = "MILD deviation"
-        else:
-            interpretation = "Normal range"
+        combined_watch_score = abs(sum_z) + abs(low_z)
 
         rows.append(
             {
@@ -1281,40 +1264,86 @@ def build_group_deviation_summary(
                 "sample_warning": "OK" if draw_count >= 30 else "LOW SAMPLE",
                 "avg_main_sum": round(avg_sum, 2),
                 "baseline_avg_main_sum": round(baseline_avg_sum, 2),
-                "sum_deviation": round(sum_deviation, 2),
-                "avg_low_count": round(avg_low, 2),
-                "baseline_avg_low_count": round(baseline_avg_low, 2),
-                "low_deviation": round(low_deviation, 2),
-                "avg_high_count": round(avg_high, 2),
-                "baseline_avg_high_count": round(baseline_avg_high, 2),
-                "high_deviation": round(high_deviation, 2),
+                "sum_deviation": round(avg_sum - baseline_avg_sum, 2),
+                "sum_z_score": round(sum_z, 3),
+                "sum_p_estimate": round(sum_p_two_sided, 4),
+                "avg_low_count": round(avg_low_count, 2),
+                "baseline_low_rate": round(baseline_low_rate, 4),
+                "low_rate": round(low_rate, 4),
+                "low_rate_z_score": round(low_z, 3),
+                "low_rate_p_estimate": round(low_p_two_sided, 4),
+                "avg_high_count": round(avg_high_count, 2),
+                "baseline_high_rate": round(baseline_high_rate, 4),
+                "high_rate": round(high_rate, 4),
                 "most_common_zone": most_common_zone,
                 "baseline_most_common_zone": baseline_zone,
-                "deviation_score": round(deviation_score, 2),
-                "interpretation": interpretation,
+                "watch_score": round(combined_watch_score, 3),
+                "interpretation": z_status(sum_z, draw_count),
+                "caution": "Exploratory only; multiple comparisons and machine selection timing are not controlled.",
             }
         )
 
-    result = pd.DataFrame(rows).sort_values("deviation_score", ascending=False)
+    result = pd.DataFrame(rows).sort_values(["watch_score", "draw_count"], ascending=[False, False])
     result.to_csv(PROCESSED_DIR / output_file, index=False)
-
     return result
 
 
-def analyze_machine_deviation(enriched: pd.DataFrame) -> pd.DataFrame:
-    return build_group_deviation_summary(
-        enriched=enriched,
-        group_column="ball_machine",
-        output_file="machine_deviation_summary.csv",
-    )
+def analyze_machine_significance(enriched: pd.DataFrame) -> pd.DataFrame:
+    return build_group_significance_summary(enriched, "ball_machine", "machine_significance_summary.csv")
 
 
-def analyze_ball_set_deviation(enriched: pd.DataFrame) -> pd.DataFrame:
-    return build_group_deviation_summary(
-        enriched=enriched,
-        group_column="ball_set",
-        output_file="ball_set_deviation_summary.csv",
+def analyze_ball_set_significance(enriched: pd.DataFrame) -> pd.DataFrame:
+    return build_group_significance_summary(enriched, "ball_set", "ball_set_significance_summary.csv")
+
+
+def analyze_metadata_quality(enriched: pd.DataFrame) -> pd.DataFrame:
+    total_draws = len(enriched)
+    metadata_columns = [
+        "ball_machine",
+        "ball_set",
+        "draw_order_1",
+        "draw_order_2",
+        "draw_order_3",
+        "draw_order_4",
+        "draw_order_5",
+        "star_order_1",
+        "star_order_2",
+        "metadata_status",
+    ]
+
+    rows = []
+    for column in metadata_columns:
+        if column not in enriched.columns:
+            rows.append({"field": column, "filled_rows": 0, "total_draws": total_draws, "coverage_rate": 0.0, "status": "missing column"})
+            continue
+        filled = int(enriched[column].fillna("").astype(str).str.strip().ne("").sum())
+        coverage = filled / total_draws if total_draws else 0.0
+        rows.append(
+            {
+                "field": column,
+                "filled_rows": filled,
+                "total_draws": total_draws,
+                "coverage_rate": round(coverage, 4),
+                "status": "OK" if coverage >= 0.95 else "PARTIAL" if coverage > 0 else "MISSING",
+            }
+        )
+
+    metadata_rows = int(enriched.get("metadata_status", pd.Series(dtype=str)).fillna("").astype(str).str.strip().ne("").sum()) if "metadata_status" in enriched.columns else 0
+    rows.append(
+        {
+            "field": "metadata_rows_overall",
+            "filled_rows": metadata_rows,
+            "total_draws": total_draws,
+            "coverage_rate": round(metadata_rows / total_draws, 4) if total_draws else 0.0,
+            "status": "OK" if metadata_rows else "MISSING",
+        }
     )
+
+    result = pd.DataFrame(rows)
+    result.to_csv(PROCESSED_DIR / "metadata_quality_summary.csv", index=False)
+    (DOCS_DIR / "metadata_quality_summary.json").write_text(result.to_json(orient="records", indent=2), encoding="utf-8")
+    return result
+
 
 def analyze_jackpot_context(financial_raw: pd.DataFrame, financial_summary: pd.DataFrame) -> pd.DataFrame:
     if financial_raw is None or financial_raw.empty:
@@ -1445,7 +1474,10 @@ def build_feature_roadmap() -> pd.DataFrame:
         {"feature": "Real machine / ball-set metadata", "status": "Ready for data", "note": "CSV support exists. Populate data/external/euromillions_machine_metadata.csv from a reliable source."},
         {"feature": "Drawn-order metadata", "status": "Ready for data", "note": "Columns draw_order_1..draw_order_5 and star_order_1..star_order_2 are supported."},
         {"feature": "Machine/set bias analysis", "status": "Implemented with sample warnings", "note": "Claims stay marked LOW SAMPLE until at least 30 draws per group."},
-        {"feature": "Heavy manual backtest workflow", "status": "Provided separately", "note": "Use .github/workflows/heavy-backtest.yml for manual long-running validation."},
+        {"feature": "Machine/set statistical significance", "status": "Implemented", "note": "Adds z-score and p-estimate style watch labels for exploratory validation."},
+        {"feature": "Metadata quality tracking", "status": "Implemented", "note": "Adds metadata coverage reporting and JSON export."},
+        {"feature": "Incremental metadata fetch", "status": "Implemented in tooling", "note": "Fetcher supports refreshing only missing/new rows before dashboard builds."},
+        {"feature": "Heavy manual backtest workflow", "status": "Enhanced", "note": "Manual workflow can refresh metadata and run the dashboard separately from scheduled builds."},
         {"feature": "Jackpot / financial weighting", "status": "Imported and summarized", "note": "Not used to modify ticket generation until jackpot fields are normalized and backtested."},
         {"feature": "Cleaner ticket export", "status": "Implemented", "note": "Exports docs/candidate_tickets.csv and docs/candidate_tickets.json."},
         {"feature": "Result auto-summary", "status": "Implemented", "note": "Exports docs/latest_result_summary.json after each build."},
@@ -1469,13 +1501,14 @@ def generate_html_dashboard(
     windowed_backtest_summary: pd.DataFrame,
     ball_set_summary: pd.DataFrame,
     drawn_order_summary: pd.DataFrame,
+    metadata_quality_summary: pd.DataFrame,
+    machine_significance_summary: pd.DataFrame,
+    ball_set_significance_summary: pd.DataFrame,
     jackpot_context_summary: pd.DataFrame,
     model_decision_summary: pd.DataFrame,
     latest_result_summary: pd.DataFrame,
     model_version_history: pd.DataFrame,
     feature_roadmap: pd.DataFrame,
-    machine_deviation_summary: pd.DataFrame,
-    ball_set_deviation_summary: pd.DataFrame,
 ) -> None:
     latest = enriched.tail(1).iloc[0]
     hot_numbers = (
@@ -1624,22 +1657,6 @@ def generate_html_dashboard(
         <p class="note">Optional post-draw analysis. Machine or ball-set claims require enough samples before being trusted.</p>
         <div class="table-wrap">{table_html(machine_summary)}</div>
       </div>
-     
-      <div class="card half">
-  <h2>Machine deviation analysis</h2>
-  <p class="note">
-    Compares each draw machine against the available metadata baseline. This is exploratory only and does not prove physical bias.
-  </p>
-  <div class="table-wrap">{table_html(machine_deviation_summary)}</div>
-</div>
-
-<div class="card half">
-  <h2>Ball-set deviation analysis</h2>
-  <p class="note">
-    Compares each ball set against the available metadata baseline. This is exploratory only and requires continued monitoring.
-  </p>
-  <div class="table-wrap">{table_html(ball_set_deviation_summary)}</div>
-</div>
 
       <div class="card half">
         <h2>Ball-set metadata</h2>
@@ -1651,6 +1668,24 @@ def generate_html_dashboard(
         <h2>Drawn-order metadata</h2>
         <p class="note">Uses draw_order_1..5 when available. Sorted results alone cannot provide this.</p>
         <div class="table-wrap">{table_html(drawn_order_summary)}</div>
+      </div>
+
+      <div class="card half">
+        <h2>Metadata quality</h2>
+        <p class="note">Tracks coverage of machine, ball-set, drawn-order, star-order, and fetch status fields.</p>
+        <div class="table-wrap">{table_html(metadata_quality_summary)}</div>
+      </div>
+
+      <div class="card half">
+        <h2>Machine significance analysis</h2>
+        <p class="note">Compares each machine against the metadata baseline. Exploratory only; does not prove physical bias.</p>
+        <div class="table-wrap">{table_html(machine_significance_summary)}</div>
+      </div>
+
+      <div class="card half">
+        <h2>Ball-set significance analysis</h2>
+        <p class="note">Compares each ball set against the metadata baseline using simple z-score style watch labels.</p>
+        <div class="table-wrap">{table_html(ball_set_significance_summary)}</div>
       </div>
 
       <div class="card half">
@@ -1727,10 +1762,9 @@ def main() -> None:
     machine_summary = analyze_machine_metadata(enriched)
     ball_set_summary = analyze_ball_set_metadata(enriched)
     drawn_order_summary = analyze_drawn_order_metadata(enriched)
-    
-    machine_deviation_summary = analyze_machine_deviation(enriched)
-    ball_set_deviation_summary = analyze_ball_set_deviation(enriched)
-    
+    metadata_quality_summary = analyze_metadata_quality(enriched)
+    machine_significance_summary = analyze_machine_significance(enriched)
+    ball_set_significance_summary = analyze_ball_set_significance(enriched)
     jackpot_context_summary = analyze_jackpot_context(financial_raw, financial_summary)
     feature_roadmap = build_feature_roadmap()
 
@@ -1763,7 +1797,7 @@ def main() -> None:
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "draw_count": int(len(enriched)),
         "latest_draw_date": latest_date,
-        "version": "v7-exports-metadata-tracking",
+        "version": "v8-high-priority-validation-ops",
     }
 
     model_version_history = update_model_version_history(summary, model_decision_summary)
@@ -1782,13 +1816,14 @@ def main() -> None:
         windowed_backtest_summary,
         ball_set_summary,
         drawn_order_summary,
+        metadata_quality_summary,
+        machine_significance_summary,
+        ball_set_significance_summary,
         jackpot_context_summary,
         model_decision_summary,
         latest_result_summary,
         model_version_history,
         feature_roadmap,
-        machine_deviation_summary,
-        ball_set_deviation_summary,
     )
 
     (DOCS_DIR / "summary.json").write_text(
