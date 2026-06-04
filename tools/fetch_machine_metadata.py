@@ -169,8 +169,10 @@ def fetch_one(draw_date: str, pause_seconds: float = 0.15) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Fetch EuroMillions machine/set/drawn-order metadata.")
-    parser.add_argument("--limit", type=int, default=250, help="Number of latest Era 3 draws to fetch. Use 0 for all Era 3 draws.")
+    parser.add_argument("--limit", type=int, default=250, help="Number of latest Era 3 draws to consider. Use 0 for all Era 3 draws.")
     parser.add_argument("--pause", type=float, default=0.15, help="Pause in seconds between requests.")
+    parser.add_argument("--incremental", action="store_true", help="Fetch only missing or incomplete metadata rows and preserve existing good rows.")
+    parser.add_argument("--force", action="store_true", help="Refetch selected rows even if existing metadata is complete.")
     args = parser.parse_args()
 
     if not RAW_DRAWS.exists():
@@ -183,12 +185,49 @@ def main() -> None:
     if args.limit and args.limit > 0:
         draws = draws.tail(args.limit)
 
+    existing = pd.DataFrame()
+    if OUTPUT.exists():
+        existing = pd.read_csv(OUTPUT, dtype=str).fillna("")
+        if "draw_date" in existing.columns:
+            existing = existing.drop_duplicates(subset=["draw_date"], keep="last")
+
+    existing_by_date = {}
+    if not existing.empty and "draw_date" in existing.columns:
+        existing_by_date = {str(row["draw_date"]): row.to_dict() for _, row in existing.iterrows()}
+
+    def row_is_complete(row: dict) -> bool:
+        return (
+            str(row.get("metadata_status", "")).strip().lower() == "ok"
+            and str(row.get("ball_machine", "")).strip()
+            and str(row.get("ball_set", "")).strip()
+            and str(row.get("draw_order_1", "")).strip()
+            and str(row.get("star_order_1", "")).strip()
+        )
+
+    target_dates = draws["draw_date"].tolist()
     rows = []
-    for position, draw_date in enumerate(draws["draw_date"].tolist(), start=1):
-        print(f"[{position}/{len(draws)}] Fetching metadata for {draw_date}")
+    fetch_dates = []
+
+    for draw_date in target_dates:
+        old_row = existing_by_date.get(str(draw_date))
+        if args.incremental and not args.force and old_row and row_is_complete(old_row):
+            rows.append(old_row)
+        else:
+            fetch_dates.append(str(draw_date))
+
+    for position, draw_date in enumerate(fetch_dates, start=1):
+        print(f"[{position}/{len(fetch_dates)}] Fetching metadata for {draw_date}")
         rows.append(fetch_one(draw_date, pause_seconds=args.pause))
 
     result = pd.DataFrame(rows)
+    if not existing.empty and args.incremental:
+        # Preserve older rows outside the selected target window.
+        selected = set(map(str, target_dates))
+        preserved = existing[~existing["draw_date"].astype(str).isin(selected)].copy()
+        if not preserved.empty:
+            result = pd.concat([preserved, result], ignore_index=True)
+
+    result = result.drop_duplicates(subset=["draw_date"], keep="last").sort_values("draw_date")
     result.to_csv(OUTPUT, index=False)
 
     ok_count = int((result["metadata_status"] == "ok").sum()) if not result.empty else 0

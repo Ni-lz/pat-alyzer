@@ -2,7 +2,10 @@ feature,status,note
 Real machine / ball-set metadata,Ready for data,CSV support exists. Populate data/external/euromillions_machine_metadata.csv from a reliable source.
 Drawn-order metadata,Ready for data,Columns draw_order_1..draw_order_5 and star_order_1..star_order_2 are supported.
 Machine/set bias analysis,Implemented with sample warnings,Claims stay marked LOW SAMPLE until at least 30 draws per group.
-Heavy manual backtest workflow,Provided separately,Use .github/workflows/heavy-backtest.yml for manual long-running validation.
+Machine/set statistical significance,Implemented,Adds z-score and p-estimate style watch labels for exploratory validation.
+Metadata quality tracking,Implemented,Adds metadata coverage reporting and JSON export.
+Incremental metadata fetch,Implemented in tooling,Fetcher supports refreshing only missing/new rows before dashboard builds.
+Heavy manual backtest workflow,Enhanced,Manual workflow can refresh metadata and run the dashboard separately from scheduled builds.
 Jackpot / financial weighting,Imported and summarized,Not used to modify ticket generation until jackpot fields are normalized and backtested.
 Cleaner ticket export,Implemented,Exports docs/candidate_tickets.csv and docs/candidate_tickets.json.
 Result auto-summary,Implemented,Exports docs/latest_result_summary.json after each build.
