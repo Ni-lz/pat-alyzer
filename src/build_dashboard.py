@@ -33,6 +33,7 @@ FINANCIAL_URL_TEMPLATE = (
 MAIN_COLS = ["n1", "n2", "n3", "n4", "n5"]
 STAR_COLS = ["s1", "s2"]
 
+
 def classify_euromillions_era(draw_date: str) -> dict:
     date = pd.to_datetime(draw_date).date()
 
@@ -61,6 +62,7 @@ def classify_euromillions_era(draw_date: str) -> dict:
         "star_pool": 12,
         "era_weight": 1.00,
     }
+
 
 def ensure_folders() -> None:
     for folder in [
@@ -278,7 +280,6 @@ def add_pattern_columns(draws: pd.DataFrame) -> pd.DataFrame:
     enriched = draws.copy()
 
     era_data = enriched["draw_date"].apply(classify_euromillions_era)
-
     enriched["era"] = era_data.apply(lambda item: item["era"])
     enriched["era_code"] = era_data.apply(lambda item: item["era_code"])
     enriched["main_pool"] = era_data.apply(lambda item: item["main_pool"])
@@ -287,31 +288,111 @@ def add_pattern_columns(draws: pd.DataFrame) -> pd.DataFrame:
 
     enriched[MAIN_COLS] = enriched[MAIN_COLS].astype(int)
     enriched[STAR_COLS] = enriched[STAR_COLS].astype(int)
-
     enriched["main_numbers"] = enriched[MAIN_COLS].values.tolist()
     enriched["star_numbers"] = enriched[STAR_COLS].values.tolist()
     enriched["zone_signature"] = enriched["main_numbers"].apply(zone_signature)
     enriched["star_zone_signature"] = enriched["star_numbers"].apply(star_zone_signature)
     enriched["sum"] = enriched[MAIN_COLS].sum(axis=1)
-
-    enriched["odd_count"] = enriched[MAIN_COLS].apply(
-        lambda row: sum(number % 2 for number in row),
-        axis=1,
-    )
+    enriched["odd_count"] = enriched[MAIN_COLS].apply(lambda row: sum(number % 2 for number in row), axis=1)
     enriched["even_count"] = 5 - enriched["odd_count"]
-
-    enriched["low_count"] = enriched[MAIN_COLS].apply(
-        lambda row: sum(number <= 25 for number in row),
-        axis=1,
-    )
+    enriched["low_count"] = enriched[MAIN_COLS].apply(lambda row: sum(number <= 25 for number in row), axis=1)
     enriched["high_count"] = 5 - enriched["low_count"]
-
     enriched.to_csv(PROCESSED_DIR / "draws_enriched.csv", index=False)
-
     return enriched
+
 
 def current_era_draws(enriched: pd.DataFrame) -> pd.DataFrame:
     return enriched[enriched["era_code"] == "era_3"].copy()
+
+
+def load_machine_metadata() -> pd.DataFrame:
+    metadata_file = BASE_DIR / "data" / "external" / "euromillions_machine_metadata.csv"
+
+    if not metadata_file.exists():
+        return pd.DataFrame()
+
+    metadata = pd.read_csv(metadata_file, dtype=str)
+
+    if metadata.empty or "draw_date" not in metadata.columns:
+        return pd.DataFrame()
+
+    metadata["draw_date"] = metadata["draw_date"].apply(normalize_date)
+    metadata = metadata.dropna(subset=["draw_date"])
+
+    return metadata
+
+
+def analyze_eras(enriched: pd.DataFrame) -> pd.DataFrame:
+    rows = []
+
+    for era, group in enriched.groupby("era"):
+        rows.append(
+            {
+                "era": era,
+                "draw_count": len(group),
+                "date_from": group["draw_date"].min(),
+                "date_to": group["draw_date"].max(),
+                "star_pool": int(group["star_pool"].max()),
+                "most_common_zone": group["zone_signature"].value_counts().idxmax(),
+                "avg_sum": round(float(group["sum"].mean()), 2),
+            }
+        )
+
+    result = pd.DataFrame(rows).sort_values("date_from")
+    result.to_csv(PROCESSED_DIR / "era_summary.csv", index=False)
+
+    return result
+
+
+def analyze_machine_metadata(enriched: pd.DataFrame) -> pd.DataFrame:
+    if "ball_machine" not in enriched.columns:
+        result = pd.DataFrame(
+            [
+                {
+                    "status": "No machine metadata loaded yet",
+                    "note": "Add data/external/euromillions_machine_metadata.csv to enable machine analysis.",
+                }
+            ]
+        )
+        result.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
+        return result
+
+    machine_data = enriched[
+        enriched["ball_machine"].astype(str).str.strip() != ""
+    ].copy()
+
+    if machine_data.empty:
+        result = pd.DataFrame(
+            [
+                {
+                    "status": "No machine metadata loaded yet",
+                    "note": "Add data/external/euromillions_machine_metadata.csv to enable machine analysis.",
+                }
+            ]
+        )
+        result.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
+        return result
+
+    rows = []
+
+    for machine, group in machine_data.groupby("ball_machine"):
+        rows.append(
+            {
+                "ball_machine": machine,
+                "draw_count": len(group),
+                "sample_warning": "OK" if len(group) >= 30 else "LOW SAMPLE",
+                "avg_main_sum": round(float(group["sum"].mean()), 2),
+                "avg_low_count": round(float(group["low_count"].mean()), 2),
+                "avg_high_count": round(float(group["high_count"].mean()), 2),
+                "most_common_zone": group["zone_signature"].value_counts().idxmax(),
+            }
+        )
+
+    result = pd.DataFrame(rows).sort_values("draw_count", ascending=False)
+    result.to_csv(PROCESSED_DIR / "machine_metadata_summary.csv", index=False)
+
+    return result
+
 
 def analyze_missing_zone_patterns(enriched: pd.DataFrame, recent_window: int = 50) -> pd.DataFrame:
     historical = enriched["zone_signature"].value_counts(normalize=True)
@@ -745,6 +826,8 @@ def generate_html_dashboard(
     zone_backtest: pd.DataFrame,
     generated_backtest_summary: pd.DataFrame,
     financial_summary: pd.DataFrame,
+    era_summary: pd.DataFrame,
+    machine_summary: pd.DataFrame,
 ) -> None:
     latest = enriched.tail(1).iloc[0]
     hot_numbers = (
@@ -857,6 +940,18 @@ def generate_html_dashboard(
         <div class="table-wrap">{table_html(financial_summary.tail(10))}</div>
       </div>
 
+      <div class="card half">
+        <h2>EuroMillions rule eras</h2>
+        <p class="note">Splits historical data into rule eras so old Lucky Star formats do not distort current-era analysis.</p>
+        <div class="table-wrap">{table_html(era_summary)}</div>
+      </div>
+
+      <div class="card half">
+        <h2>Machine / ball-set metadata</h2>
+        <p class="note">Optional post-draw analysis. Machine or ball-set claims require enough samples before being trusted.</p>
+        <div class="table-wrap">{table_html(machine_summary)}</div>
+      </div>
+
       <div class="card third">
         <h2>Hot main numbers</h2>
         <div class="table-wrap">{table_html(hot_numbers)}</div>
@@ -882,29 +977,72 @@ def generate_html_dashboard(
 def main() -> None:
     ensure_folders()
     fetch_official_csvs()
+
     _, financial_summary = normalize_financialdata()
+
     draws = normalize_gamedata()
+
     if draws.empty:
         raise RuntimeError("No draw data was normalized. CSV parsing needs adjustment.")
+
     enriched = add_pattern_columns(draws)
+
+    machine_metadata = load_machine_metadata()
+
+    if not machine_metadata.empty:
+        enriched = enriched.merge(machine_metadata, on="draw_date", how="left")
+    else:
+        enriched["ball_machine"] = ""
+        enriched["ball_set"] = ""
+
+    enriched.to_csv(PROCESSED_DIR / "draws_enriched.csv", index=False)
+
     missing_patterns = analyze_missing_zone_patterns(enriched)
     hybrid_patterns = get_hybrid_target_signatures(enriched)
+
+    era_summary = analyze_eras(enriched)
+    machine_summary = analyze_machine_metadata(enriched)
+
     latest_date = str(enriched.tail(1).iloc[0]["draw_date"])
-    tickets = generate_tickets(enriched, hybrid_patterns, amount=10, seed=latest_date, strategy="v2_scored")
+
+    tickets = generate_tickets(
+        enriched,
+        hybrid_patterns,
+        amount=10,
+        seed=latest_date,
+        strategy="v2_scored",
+    )
+
     zone_backtest = backtest_zone_strategy(enriched)
+
     _, generated_backtest_summary = backtest_generated_ticket_strategies(enriched)
-    generate_html_dashboard(enriched, missing_patterns, hybrid_patterns, tickets, zone_backtest, generated_backtest_summary, financial_summary)
+
+    generate_html_dashboard(
+        enriched,
+        missing_patterns,
+        hybrid_patterns,
+        tickets,
+        zone_backtest,
+        generated_backtest_summary,
+        financial_summary,
+        era_summary,
+        machine_summary,
+    )
 
     summary = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "draw_count": int(len(enriched)),
         "latest_draw_date": latest_date,
-        "version": "v3-visual-baselines",
+        "version": "v4-draw-system-aware",
     }
-    (DOCS_DIR / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+
+    (DOCS_DIR / "summary.json").write_text(
+        json.dumps(summary, indent=2),
+        encoding="utf-8",
+    )
+
     print("Build completed.")
     print(summary)
-
 
 if __name__ == "__main__":
     main()

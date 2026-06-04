@@ -46,7 +46,7 @@
       <div class="badge-row">
         <span class="badge">Hybrid 60/40</span><span class="badge">Rainbow zones</span><span class="badge">Deterministic tickets</span><span class="badge">Backtested baselines</span><span class="badge">Official CSV source</span>
       </div>
-      <div class="metrics"><div class='metric'><span>Latest draw</span><strong>2026-06-02</strong></div><div class='metric'><span>Numbers</span><strong>6, 9, 17, 18, 42 + 7, 9</strong></div><div class='metric'><span>Rainbow zone</span><strong>2-2-0-0-1</strong></div><div class='metric'><span>Draws analyzed</span><strong>1951</strong></div><div class='metric'><span>Best generated backtest</span><strong>Pure random</strong></div><div class='metric'><span>Updated</span><strong>2026-06-04 13:19 UTC</strong></div></div>
+      <div class="metrics"><div class='metric'><span>Latest draw</span><strong>2026-06-02</strong></div><div class='metric'><span>Numbers</span><strong>6, 9, 17, 18, 42 + 7, 9</strong></div><div class='metric'><span>Rainbow zone</span><strong>2-2-0-0-1</strong></div><div class='metric'><span>Draws analyzed</span><strong>1951</strong></div><div class='metric'><span>Best generated backtest</span><strong>Pure random</strong></div><div class='metric'><span>Updated</span><strong>2026-06-04 13:38 UTC</strong></div></div>
     </section>
 
     <section class="grid">
@@ -601,6 +601,72 @@
 </table></div>
       </div>
 
+      <div class="card half">
+        <h2>EuroMillions rule eras</h2>
+        <p class="note">Splits historical data into rule eras so old Lucky Star formats do not distort current-era analysis.</p>
+        <div class="table-wrap"><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>era</th>
+      <th>draw_count</th>
+      <th>date_from</th>
+      <th>date_to</th>
+      <th>star_pool</th>
+      <th>most_common_zone</th>
+      <th>avg_sum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Era 1: 2004-2011</td>
+      <td>378</td>
+      <td>2004-02-13</td>
+      <td>2011-05-06</td>
+      <td>9</td>
+      <td>1-1-1-1-1</td>
+      <td>126.11</td>
+    </tr>
+    <tr>
+      <td>Era 2: 2011-2016</td>
+      <td>562</td>
+      <td>2011-05-10</td>
+      <td>2016-09-23</td>
+      <td>11</td>
+      <td>1-1-1-1-1</td>
+      <td>127.62</td>
+    </tr>
+    <tr>
+      <td>Era 3: 2016-current</td>
+      <td>1011</td>
+      <td>2016-09-27</td>
+      <td>2026-06-02</td>
+      <td>12</td>
+      <td>1-1-1-1-1</td>
+      <td>127.95</td>
+    </tr>
+  </tbody>
+</table></div>
+      </div>
+
+      <div class="card half">
+        <h2>Machine / ball-set metadata</h2>
+        <p class="note">Optional post-draw analysis. Machine or ball-set claims require enough samples before being trusted.</p>
+        <div class="table-wrap"><table border="1" class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>status</th>
+      <th>note</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>No machine metadata loaded yet</td>
+      <td>Add data/external/euromillions_machine_metadata.csv to enable machine analysis.</td>
+    </tr>
+  </tbody>
+</table></div>
+      </div>
+
       <div class="card third">
         <h2>Hot main numbers</h2>
         <div class="table-wrap"><table border="1" class="dataframe data-table">
@@ -694,7 +760,7 @@
         <p class="note">The score is a strategy-fit score, not a winning probability. Higher means the ticket matches the current tested rules better.</p>
       </div>
     </section>
-    <div class="footer">Pat-alyzer · generated from official public EuroMillions CSV data · 2026-06-04 13:19 UTC</div>
+    <div class="footer">Pat-alyzer · generated from official public EuroMillions CSV data · 2026-06-04 13:38 UTC</div>
   </main>
 </body>
 </html>
