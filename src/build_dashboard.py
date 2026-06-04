@@ -463,6 +463,7 @@ def build_context(enriched: pd.DataFrame) -> dict:
     exact_draws = set()
     number_counts = Counter()
     star_zone_counts = Counter()
+    star_counts = Counter()
     last_seen_index = {number: -1 for number in range(1, 51)}
 
     for index, numbers in enumerate(main_lists):
@@ -476,6 +477,7 @@ def build_context(enriched: pd.DataFrame) -> dict:
 
     for stars in star_lists:
         star_zone_counts[star_zone_signature(sorted(stars))] += 1
+        star_counts.update(stars)
 
     current_index = len(enriched) - 1
     gaps = {number: current_index - last_seen_index[number] if last_seen_index[number] >= 0 else current_index + 1 for number in range(1, 51)}
@@ -485,6 +487,7 @@ def build_context(enriched: pd.DataFrame) -> dict:
         "triplet_counts": triplet_counts,
         "exact_draws": exact_draws,
         "number_counts": number_counts,
+        "star_counts": star_counts,
         "star_zone_counts": star_zone_counts,
         "gaps": gaps,
         "draw_count": len(enriched),
@@ -528,6 +531,46 @@ def make_ticket_from_signature(signature: str, rng: random.Random, pool: list[in
         return None
     return sorted(selected)
 
+
+
+def passes_light_random_filters(nums: list[int], ctx: dict) -> bool:
+    nums = sorted(nums)
+    total_sum = sum(nums)
+    odd = sum(number % 2 for number in nums)
+    low = sum(number <= 25 for number in nums)
+
+    if tuple(nums) in ctx["exact_draws"]:
+        return False
+    if not 80 <= total_sum <= 190:
+        return False
+    if odd in [0, 5]:
+        return False
+    if low in [0, 5]:
+        return False
+    if sum(number <= 31 for number in nums) >= 5:
+        return False
+
+    return True
+
+
+def weighted_star_sample(rng: random.Random, ctx: dict, star_pool: int = 12) -> list[int]:
+    # Light all-time/Era-aware star weighting. The +1 keeps all stars possible.
+    available = list(range(1, star_pool + 1))
+    selected: list[int] = []
+
+    while len(selected) < 2 and available:
+        weights = [ctx.get("star_counts", Counter()).get(star, 0) + 1 for star in available]
+        total = sum(weights)
+        pick = rng.uniform(0, total)
+        cumulative = 0.0
+
+        for index, weight in enumerate(weights):
+            cumulative += weight
+            if pick <= cumulative:
+                selected.append(available.pop(index))
+                break
+
+    return sorted(selected)
 
 def score_ticket(nums: list[int], stars: list[int], hybrid_lookup: dict, ctx: dict) -> dict:
     nums = sorted(nums)
@@ -613,13 +656,18 @@ def generate_tickets(
 
     for index in range(sample_size):
         target = targets[index % max(1, min(len(targets), 5))]
-        if strategy == "random":
+        if strategy in ["random", "era3_diversified_random"]:
             nums = sorted(rng.sample(range(1, 51), 5))
+            if strategy == "era3_diversified_random" and not passes_light_random_filters(nums, ctx):
+                continue
         else:
             nums = make_ticket_from_signature(target, rng, pool)
             if nums is None:
                 continue
-        stars = sorted(rng.sample(range(1, 13), 2))
+        if strategy == "era3_diversified_random":
+            stars = weighted_star_sample(rng, ctx, star_pool=12)
+        else:
+            stars = sorted(rng.sample(range(1, 13), 2))
         key = f"{nums}|{stars}"
         if key in seen:
             continue
@@ -629,6 +677,15 @@ def generate_tickets(
             scored["final_strategy_score"] = scored["hybrid_score"]
         elif strategy == "random":
             scored["final_strategy_score"] = 0
+        elif strategy == "era3_diversified_random":
+            scored["final_strategy_score"] = int(round(
+                0.35 * scored["sum_score"]
+                + 0.20 * scored["odd_even_score"]
+                + 0.20 * scored["low_high_score"]
+                + 0.15 * scored["star_pattern_score"]
+                + 0.10 * scored["anti_crowd_score"]
+            ))
+            scored["why_selected"] = "Era 3 diversified random | " + scored["why_selected"]
         if scored["duplicate_penalty"] >= 100:
             continue
         scored_tickets.append(scored)
@@ -637,7 +694,7 @@ def generate_tickets(
     if df.empty:
         return df
     df = df.sort_values(["final_strategy_score", "gap_overdue_score", "pair_score"], ascending=False).head(amount)
-    if strategy == "v2_scored":
+    if strategy in ["v2_scored", "era3_diversified_random"]:
         df.to_csv(PROCESSED_DIR / "candidate_tickets.csv", index=False)
     return df.reset_index(drop=True)
 
@@ -759,6 +816,7 @@ def backtest_generated_ticket_strategies(
     rows = []
     start = max(250, len(enriched) - test_window)
     strategies = {
+        "Era 3 diversified random": "era3_diversified_random",
         "Pat-alyzer v2 scored": "v2_scored",
         "Hybrid-zone only": "hybrid_zone_only",
         "Most-common-zone only": "common_zone_only",
@@ -771,15 +829,32 @@ def backtest_generated_ticket_strategies(
         actual_stars = {int(actual[col]) for col in STAR_COLS}
         hybrid = get_hybrid_target_signatures(history)
         common = common_zone_patterns(history)
+        era3_history = current_era_draws(history)
+        if len(era3_history) < 100:
+            era3_history = history
+        era3_hybrid = get_hybrid_target_signatures(era3_history)
+
         for display_name, strategy in strategies.items():
-            pattern_source = common if strategy == "common_zone_only" else hybrid
+            if strategy == "common_zone_only":
+                training_data = history
+                pattern_source = common
+                effective_strategy = "hybrid_zone_only"
+            elif strategy == "era3_diversified_random":
+                training_data = era3_history
+                pattern_source = era3_hybrid
+                effective_strategy = strategy
+            else:
+                training_data = history
+                pattern_source = hybrid
+                effective_strategy = strategy
+
             tickets = generate_tickets(
-                history,
+                training_data,
                 pattern_source,
                 amount=tickets_per_draw,
                 sample_size=sample_size,
                 seed=f"{actual['draw_date']}:{display_name}",
-                strategy="hybrid_zone_only" if strategy == "common_zone_only" else strategy,
+                strategy=effective_strategy,
             )
             metrics = evaluate_ticket_set(tickets, actual_nums, actual_stars)
             rows.append({"draw_date": actual["draw_date"], "strategy": display_name, **metrics})
@@ -806,6 +881,103 @@ def backtest_generated_ticket_strategies(
     return results, summary
 
 
+
+def backtest_era_training_modes(
+    enriched: pd.DataFrame,
+    test_window: int = 60,
+    tickets_per_draw: int = 10,
+    sample_size: int = 1200,
+) -> pd.DataFrame:
+    rows = []
+    start = max(250, len(enriched) - test_window)
+
+    training_modes = {
+        "Era 3 diversified random": "era3_diversified_random",
+        "All-time training": "all_time",
+        "Era 3 only training": "era_3",
+        "Recent 250 draws training": "recent_250",
+        "Pure random baseline": "random",
+    }
+
+    for index in range(start, len(enriched)):
+        history_all = enriched.iloc[:index].copy()
+        actual = enriched.iloc[index]
+
+        actual_nums = {int(actual[col]) for col in MAIN_COLS}
+        actual_stars = {int(actual[col]) for col in STAR_COLS}
+
+        for display_name, mode in training_modes.items():
+            if mode in ["era_3", "era3_diversified_random"]:
+                training_data = history_all[history_all["era_code"] == "era_3"].copy()
+            elif mode == "recent_250":
+                training_data = history_all.tail(250).copy()
+            else:
+                training_data = history_all
+
+            if len(training_data) < 100:
+                continue
+
+            hybrid = get_hybrid_target_signatures(training_data)
+
+            if mode == "random":
+                strategy = "random"
+            elif mode == "era3_diversified_random":
+                strategy = "era3_diversified_random"
+            else:
+                strategy = "v2_scored"
+
+            tickets = generate_tickets(
+                training_data,
+                hybrid,
+                amount=tickets_per_draw,
+                sample_size=sample_size,
+                seed=f"{actual['draw_date']}:{display_name}",
+                strategy=strategy,
+            )
+
+            metrics = evaluate_ticket_set(tickets, actual_nums, actual_stars)
+
+            rows.append(
+                {
+                    "draw_date": actual["draw_date"],
+                    "training_mode": display_name,
+                    "training_draws": len(training_data),
+                    **metrics,
+                }
+            )
+
+    results = pd.DataFrame(rows)
+    results.to_csv(PROCESSED_DIR / "era_training_backtest_results.csv", index=False)
+
+    summary_rows = []
+
+    for mode_name, subset in results.groupby("training_mode"):
+        summary_rows.append(
+            {
+                "training_mode": mode_name,
+                "draws_tested": int(subset["draw_date"].nunique()),
+                "avg_training_draws": round(float(subset["training_draws"].mean()), 2),
+                "avg_best_main_matches": round(float(subset["best_main_matches"].mean()), 4),
+                "avg_best_star_matches": round(float(subset["best_star_matches"].mean()), 4),
+                "hit_2_main_or_better_rate": round(float(subset["hit_2_main_or_better"].mean()), 4),
+                "hit_3_main_or_better_rate": round(float(subset["hit_3_main_or_better"].mean()), 4),
+                "hit_2_main_plus_1_star_or_better_rate": round(float(subset["hit_2_main_plus_1_star_or_better"].mean()), 4),
+            }
+        )
+
+    summary = pd.DataFrame(summary_rows).sort_values(
+        [
+            "hit_2_main_plus_1_star_or_better_rate",
+            "hit_3_main_or_better_rate",
+            "hit_2_main_or_better_rate",
+        ],
+        ascending=False,
+    )
+
+    summary.to_csv(PROCESSED_DIR / "era_training_backtest_summary.csv", index=False)
+
+    return summary
+
 def table_html(df: pd.DataFrame, classes: str = "") -> str:
     if df is None or df.empty:
         return "<p class='muted'>No data available.</p>"
@@ -828,6 +1000,7 @@ def generate_html_dashboard(
     financial_summary: pd.DataFrame,
     era_summary: pd.DataFrame,
     machine_summary: pd.DataFrame,
+    era_training_summary: pd.DataFrame,
 ) -> None:
     latest = enriched.tail(1).iloc[0]
     hot_numbers = (
@@ -900,7 +1073,7 @@ def generate_html_dashboard(
       <p>EuroMillions pattern analysis with rainbow-zone modelling, hybrid 60/40 scoring, wheeling-based ticket generation, and historical backtesting.</p>
       <p class="warning">This analyzes historical structures and creates strategy-based candidate tickets. It does not guarantee or truly predict winning numbers.</p>
       <div class="badge-row">
-        <span class="badge">Hybrid 60/40</span><span class="badge">Rainbow zones</span><span class="badge">Deterministic tickets</span><span class="badge">Backtested baselines</span><span class="badge">Official CSV source</span>
+        <span class="badge">Era 3 diversified random</span><span class="badge">Rainbow zones</span><span class="badge">Deterministic tickets</span><span class="badge">Backtested baselines</span><span class="badge">Official CSV source</span>
       </div>
       <div class="metrics">{hero_metrics}</div>
     </section>
@@ -908,14 +1081,20 @@ def generate_html_dashboard(
     <section class="grid">
       <div class="card">
         <h2>Generated candidate tickets</h2>
-        <p class="note">Stable per latest draw date. Uses wheeling pool, hybrid zones, pair/triplet scoring, gap scoring, star scoring, anti-crowd scoring, and duplicate avoidance.</p>
+        <p class="note">Stable per latest draw date. Default is Era 3 diversified random: mostly random generation with light sanity filters, duplicate avoidance, and star weighting.</p>
         <div class="table-wrap">{table_html(tickets)}</div>
       </div>
 
       <div class="card half">
         <h2>Strategy comparison backtest</h2>
-        <p class="note">Compares Pat-alyzer v2 against random, hybrid-zone-only, and most-common-zone ticket generation over recent historical draws.</p>
+        <p class="note">Compares Era 3 diversified random, Pat-alyzer v2, random, hybrid-zone-only, and most-common-zone ticket generation over recent historical draws.</p>
         <div class="table-wrap">{table_html(generated_backtest_summary)}</div>
+      </div>
+
+      <div class="card half">
+        <h2>Era-aware training comparison</h2>
+        <p class="note">Compares all-time training, Era 3-only training, recent-only training, Era 3 diversified random, and pure random baseline.</p>
+        <div class="table-wrap">{table_html(era_training_summary)}</div>
       </div>
 
       <div class="card half">
@@ -999,6 +1178,10 @@ def main() -> None:
 
     missing_patterns = analyze_missing_zone_patterns(enriched)
     hybrid_patterns = get_hybrid_target_signatures(enriched)
+    current_era_data = current_era_draws(enriched)
+    if len(current_era_data) < 100:
+        current_era_data = enriched
+    current_era_hybrid_patterns = get_hybrid_target_signatures(current_era_data)
 
     era_summary = analyze_eras(enriched)
     machine_summary = analyze_machine_metadata(enriched)
@@ -1006,16 +1189,17 @@ def main() -> None:
     latest_date = str(enriched.tail(1).iloc[0]["draw_date"])
 
     tickets = generate_tickets(
-        enriched,
-        hybrid_patterns,
+        current_era_data,
+        current_era_hybrid_patterns,
         amount=10,
-        seed=latest_date,
-        strategy="v2_scored",
+        seed=f"{latest_date}:era3-diversified-random",
+        strategy="era3_diversified_random",
     )
 
     zone_backtest = backtest_zone_strategy(enriched)
 
     _, generated_backtest_summary = backtest_generated_ticket_strategies(enriched)
+    era_training_summary = backtest_era_training_modes(enriched)
 
     generate_html_dashboard(
         enriched,
@@ -1027,13 +1211,14 @@ def main() -> None:
         financial_summary,
         era_summary,
         machine_summary,
+        era_training_summary,
     )
 
     summary = {
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "draw_count": int(len(enriched)),
         "latest_draw_date": latest_date,
-        "version": "v4-draw-system-aware",
+        "version": "v5-era3-diversified-random",
     }
 
     (DOCS_DIR / "summary.json").write_text(
