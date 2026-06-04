@@ -1,0 +1,4 @@
+test_name,draws_tested,hit_rate
+Missing-pattern top zone signatures,1751,0.1833
+Most-common top zone signatures,1751,0.2296
+Random signature baseline estimate,1751,0.0913
