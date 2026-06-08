@@ -75,38 +75,55 @@ def ensure_folders() -> None:
         folder.mkdir(parents=True, exist_ok=True)
 
 
-def download_file(url: str, destination: Path) -> bool:
-    if destination.exists() and destination.stat().st_size > 0:
+def download_file(url: str, destination: Path, force: bool = False) -> bool:
+    if destination.exists() and destination.stat().st_size > 0 and not force:
         print(f"Using cached file: {destination}")
         return True
 
     try:
-        response = requests.get(url, timeout=30)
+        response = requests.get(url, timeout=60)
     except requests.RequestException as exc:
         print(f"Download failed: {url} ({exc})")
+
+        if force:
+            raise RuntimeError(f"Critical source refresh failed for current-year file: {url}") from exc
+
         return False
 
     if response.status_code == 404:
         print(f"Not found: {url}")
+
+        if force:
+            raise RuntimeError(f"Critical source refresh returned 404 for current-year file: {url}")
+
         return False
 
     response.raise_for_status()
+    destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_bytes(response.content)
-    print(f"Downloaded: {destination}")
+
+    mode = "Force-downloaded" if force else "Downloaded"
+    print(f"{mode}: {destination}")
     return True
 
 
 def fetch_official_csvs() -> None:
-    for year in range(START_YEAR, CURRENT_YEAR + 1):
+    current_year = datetime.now(timezone.utc).year
+
+    for year in range(START_YEAR, current_year + 1):
+        force_refresh = year == current_year
+
         download_file(
             GAME_URL_TEMPLATE.format(year=year),
             RAW_DIR / "gamedata" / f"euromillions-gamedata-NL-{year}.csv",
+            force=force_refresh,
         )
+
         download_file(
             FINANCIAL_URL_TEMPLATE.format(year=year),
             RAW_DIR / "financialdata" / f"euromillions-financialdata-NL-{year}.csv",
+            force=force_refresh,
         )
-
 
 def read_csv_flexible(path: Path) -> pd.DataFrame:
     for encoding in ["utf-8-sig", "latin1"]:
@@ -1837,4 +1854,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
 
