@@ -1,4 +1,4 @@
 ball_machine,draw_count,sample_warning,avg_main_sum,avg_low_count,avg_high_count,most_common_zone
 14,89,OK,133.35,2.38,2.62,0-1-1-1-2
 13,86,OK,126.48,2.51,2.49,1-2-1-0-1
-15,75,OK,126.4,2.57,2.43,1-1-1-1-1
+15,76,OK,125.96,2.59,2.41,1-1-1-1-1

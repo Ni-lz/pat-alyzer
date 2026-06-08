@@ -1,79 +1,79 @@
 [
   {
     "field":"ball_machine",
-    "filled_rows":250,
+    "filled_rows":251,
     "total_draws":1952,
-    "coverage_rate":0.1281,
+    "coverage_rate":0.1286,
     "status":"PARTIAL"
   },
   {
     "field":"ball_set",
-    "filled_rows":250,
+    "filled_rows":251,
     "total_draws":1952,
-    "coverage_rate":0.1281,
+    "coverage_rate":0.1286,
     "status":"PARTIAL"
   },
   {
     "field":"draw_order_1",
-    "filled_rows":250,
+    "filled_rows":251,
     "total_draws":1952,
-    "coverage_rate":0.1281,
+    "coverage_rate":0.1286,
     "status":"PARTIAL"
   },
   {
     "field":"draw_order_2",
-    "filled_rows":250,
+    "filled_rows":251,
     "total_draws":1952,
-    "coverage_rate":0.1281,
+    "coverage_rate":0.1286,
     "status":"PARTIAL"
   },
   {
     "field":"draw_order_3",
-    "filled_rows":250,
+    "filled_rows":251,
     "total_draws":1952,
-    "coverage_rate":0.1281,
+    "coverage_rate":0.1286,
     "status":"PARTIAL"
   },
   {
     "field":"draw_order_4",
-    "filled_rows":250,
+    "filled_rows":251,
     "total_draws":1952,
-    "coverage_rate":0.1281,
+    "coverage_rate":0.1286,
     "status":"PARTIAL"
   },
   {
     "field":"draw_order_5",
-    "filled_rows":250,
+    "filled_rows":251,
     "total_draws":1952,
-    "coverage_rate":0.1281,
+    "coverage_rate":0.1286,
     "status":"PARTIAL"
   },
   {
     "field":"star_order_1",
-    "filled_rows":250,
+    "filled_rows":251,
     "total_draws":1952,
-    "coverage_rate":0.1281,
+    "coverage_rate":0.1286,
     "status":"PARTIAL"
   },
   {
     "field":"star_order_2",
-    "filled_rows":250,
+    "filled_rows":251,
     "total_draws":1952,
-    "coverage_rate":0.1281,
+    "coverage_rate":0.1286,
     "status":"PARTIAL"
   },
   {
     "field":"metadata_status",
-    "filled_rows":250,
+    "filled_rows":251,
     "total_draws":1952,
-    "coverage_rate":0.1281,
+    "coverage_rate":0.1286,
     "status":"PARTIAL"
   },
   {
     "field":"metadata_rows_overall",
-    "filled_rows":250,
+    "filled_rows":251,
     "total_draws":1952,
-    "coverage_rate":0.1281,
+    "coverage_rate":0.1286,
     "status":"OK"
   }
 ]
