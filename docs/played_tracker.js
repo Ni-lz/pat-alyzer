@@ -1,5 +1,5 @@
 (function () {
-  const STORAGE_KEY = "patalyzer.playedTickets.v1";
+  const STORAGE_KEY = "patalyzer.playedTickets.v2";
 
   function loadPlayedTickets() {
     try {
@@ -202,7 +202,7 @@
       .filter((row) => row.querySelector(".pat-tracker-checkbox")?.checked)
       .map((row, rowIndex) => {
         const cells = Array.from(row.querySelectorAll("td"));
-        const offset = 1;
+        const offset = 0;
 
         const numbers = parseNumberList(cells[indexes.numbers + offset]?.innerText);
         const stars = parseNumberList(cells[indexes.stars + offset]?.innerText);
@@ -221,7 +221,8 @@
           star_matches: "",
           result_checked: false,
         };
-      });
+      })
+      .filter(Boolean);
   }
 
   function renderHistory() {
@@ -287,7 +288,8 @@
 
       table.querySelectorAll(".pat-tracker-checkbox").forEach((checkbox) => {
         checkbox.checked = false;
-      });
+      })
+      .filter(Boolean);
 
       renderHistory();
     });
@@ -314,7 +316,8 @@
           star_matches: starMatches,
           result_checked: true,
         };
-      });
+      })
+      .filter(Boolean);
 
       savePlayedTickets(records);
       renderHistory();
@@ -396,3 +399,4 @@
 
   document.addEventListener("DOMContentLoaded", init);
 })();
+
