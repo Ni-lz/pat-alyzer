@@ -1,9 +1,9 @@
 [
   {
     "active_model":"Era 3 diversified random",
-    "latest_draw_date":"2026-06-19",
+    "latest_draw_date":"2026-06-23",
     "training_scope":"All Era 3 \/ current-rule drawings",
-    "era3_training_draws":1016,
+    "era3_training_draws":1017,
     "candidate_tickets":10,
     "best_recent_backtest_strategy":"Era 3 diversified random",
     "decision":"Use current-rule Era 3 data, mostly random generation, light sanity filters, duplicate avoidance, and star weighting.",
