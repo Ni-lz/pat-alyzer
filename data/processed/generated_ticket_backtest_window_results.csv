@@ -1,9 +1,4 @@
 window,draw_date,strategy,sample_size,best_main_matches,best_star_matches,hit_2_main_or_better,hit_3_main_or_better,hit_2_main_plus_1_star_or_better
-Last 60 draws,2025-12-09,Era 3 diversified random,1200,1,1,False,False,False
-Last 60 draws,2025-12-09,Pat-alyzer v2 scored,1200,2,1,True,False,True
-Last 60 draws,2025-12-09,Hybrid-zone only,1200,1,1,False,False,False
-Last 60 draws,2025-12-09,Most-common-zone only,1200,1,1,False,False,False
-Last 60 draws,2025-12-09,Pure random,1200,1,2,False,False,False
 Last 60 draws,2025-12-12,Era 3 diversified random,1200,2,1,True,False,True
 Last 60 draws,2025-12-12,Pat-alyzer v2 scored,1200,1,1,False,False,False
 Last 60 draws,2025-12-12,Hybrid-zone only,1200,2,1,True,False,False
@@ -299,11 +294,11 @@ Last 60 draws,2026-07-03,Pat-alyzer v2 scored,1200,1,1,False,False,False
 Last 60 draws,2026-07-03,Hybrid-zone only,1200,1,1,False,False,False
 Last 60 draws,2026-07-03,Most-common-zone only,1200,0,1,False,False,False
 Last 60 draws,2026-07-03,Pure random,1200,0,1,False,False,False
-Last 150 draws,2025-01-28,Era 3 diversified random,800,2,1,True,False,True
-Last 150 draws,2025-01-28,Pat-alyzer v2 scored,800,1,1,False,False,False
-Last 150 draws,2025-01-28,Hybrid-zone only,800,1,2,False,False,False
-Last 150 draws,2025-01-28,Most-common-zone only,800,1,1,False,False,False
-Last 150 draws,2025-01-28,Pure random,800,2,1,True,False,False
+Last 60 draws,2026-07-07,Era 3 diversified random,1200,1,1,False,False,False
+Last 60 draws,2026-07-07,Pat-alyzer v2 scored,1200,1,1,False,False,False
+Last 60 draws,2026-07-07,Hybrid-zone only,1200,1,1,False,False,False
+Last 60 draws,2026-07-07,Most-common-zone only,1200,1,1,False,False,False
+Last 60 draws,2026-07-07,Pure random,1200,2,1,True,False,True
 Last 150 draws,2025-01-31,Era 3 diversified random,800,1,1,False,False,False
 Last 150 draws,2025-01-31,Pat-alyzer v2 scored,800,1,1,False,False,False
 Last 150 draws,2025-01-31,Hybrid-zone only,800,0,1,False,False,False
@@ -1049,11 +1044,11 @@ Last 150 draws,2026-07-03,Pat-alyzer v2 scored,800,1,1,False,False,False
 Last 150 draws,2026-07-03,Hybrid-zone only,800,1,1,False,False,False
 Last 150 draws,2026-07-03,Most-common-zone only,800,1,1,False,False,False
 Last 150 draws,2026-07-03,Pure random,800,1,1,False,False,False
-Last 250 draws,2024-02-13,Era 3 diversified random,600,2,2,True,False,False
-Last 250 draws,2024-02-13,Pat-alyzer v2 scored,600,1,2,False,False,False
-Last 250 draws,2024-02-13,Hybrid-zone only,600,1,1,False,False,False
-Last 250 draws,2024-02-13,Most-common-zone only,600,1,1,False,False,False
-Last 250 draws,2024-02-13,Pure random,600,2,1,True,False,True
+Last 150 draws,2026-07-07,Era 3 diversified random,800,2,2,True,False,False
+Last 150 draws,2026-07-07,Pat-alyzer v2 scored,800,1,1,False,False,False
+Last 150 draws,2026-07-07,Hybrid-zone only,800,1,1,False,False,False
+Last 150 draws,2026-07-07,Most-common-zone only,800,1,1,False,False,False
+Last 150 draws,2026-07-07,Pure random,800,1,1,False,False,False
 Last 250 draws,2024-02-16,Era 3 diversified random,600,1,1,False,False,False
 Last 250 draws,2024-02-16,Pat-alyzer v2 scored,600,0,1,False,False,False
 Last 250 draws,2024-02-16,Hybrid-zone only,600,1,1,False,False,False
@@ -2299,6 +2294,11 @@ Last 250 draws,2026-07-03,Pat-alyzer v2 scored,600,1,1,False,False,False
 Last 250 draws,2026-07-03,Hybrid-zone only,600,1,1,False,False,False
 Last 250 draws,2026-07-03,Most-common-zone only,600,1,1,False,False,False
 Last 250 draws,2026-07-03,Pure random,600,1,2,False,False,False
+Last 250 draws,2026-07-07,Era 3 diversified random,600,1,2,False,False,False
+Last 250 draws,2026-07-07,Pat-alyzer v2 scored,600,1,1,False,False,False
+Last 250 draws,2026-07-07,Hybrid-zone only,600,1,1,False,False,False
+Last 250 draws,2026-07-07,Most-common-zone only,600,1,1,False,False,False
+Last 250 draws,2026-07-07,Pure random,600,2,1,True,False,True
 Era 3 full,2016-09-27,Era 3 diversified random,350,2,0,True,False,False
 Era 3 full,2016-09-27,Pat-alyzer v2 scored,350,1,1,False,False,False
 Era 3 full,2016-09-27,Hybrid-zone only,350,1,1,False,False,False
@@ -7399,3 +7399,8 @@ Era 3 full,2026-07-03,Pat-alyzer v2 scored,350,1,1,False,False,False
 Era 3 full,2026-07-03,Hybrid-zone only,350,1,1,False,False,False
 Era 3 full,2026-07-03,Most-common-zone only,350,0,1,False,False,False
 Era 3 full,2026-07-03,Pure random,350,1,1,False,False,False
+Era 3 full,2026-07-07,Era 3 diversified random,350,2,0,True,False,False
+Era 3 full,2026-07-07,Pat-alyzer v2 scored,350,2,1,True,False,True
+Era 3 full,2026-07-07,Hybrid-zone only,350,1,2,False,False,False
+Era 3 full,2026-07-07,Most-common-zone only,350,1,2,False,False,False
+Era 3 full,2026-07-07,Pure random,350,1,1,False,False,False
