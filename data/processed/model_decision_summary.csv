@@ -1,2 +1,2 @@
 active_model,latest_draw_date,training_scope,era3_training_draws,candidate_tickets,best_recent_backtest_strategy,decision,caution
-Era 3 diversified random,2026-07-07,All Era 3 / current-rule drawings,1021,10,Era 3 diversified random,"Use current-rule Era 3 data, mostly random generation, light sanity filters, duplicate avoidance, and star weighting.",Strategy-fit score is not a probability and does not guarantee prediction.
+Era 3 diversified random,2026-07-10,All Era 3 / current-rule drawings,1022,10,Era 3 diversified random,"Use current-rule Era 3 data, mostly random generation, light sanity filters, duplicate avoidance, and star weighting.",Strategy-fit score is not a probability and does not guarantee prediction.

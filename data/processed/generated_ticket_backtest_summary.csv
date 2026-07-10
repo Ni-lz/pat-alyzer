@@ -1,6 +1,6 @@
 strategy,draws_tested,avg_best_main_matches,avg_best_star_matches,hit_2_main_or_better_rate,hit_3_main_or_better_rate,hit_2_main_plus_1_star_or_better_rate
-Era 3 diversified random,60,1.55,1.1167,0.5,0.05,0.25
-Most-common-zone only,60,1.1833,1.2,0.3,0.0333,0.1833
-Pat-alyzer v2 scored,60,1.15,1.1167,0.2833,0.0167,0.1833
-Pure random,60,1.3667,1.0667,0.3833,0.0333,0.1667
-Hybrid-zone only,60,1.15,1.1833,0.3,0.0167,0.1667
+Era 3 diversified random,60,1.5333,1.1,0.4833,0.05,0.2333
+Most-common-zone only,60,1.1667,1.2,0.2833,0.0333,0.1833
+Pat-alyzer v2 scored,60,1.1333,1.1167,0.2667,0.0167,0.1667
+Pure random,60,1.35,1.05,0.3833,0.0167,0.15
+Hybrid-zone only,60,1.1333,1.1833,0.2833,0.0167,0.15
