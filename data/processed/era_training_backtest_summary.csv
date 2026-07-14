@@ -1,6 +1,6 @@
 training_mode,draws_tested,avg_training_draws,avg_best_main_matches,avg_best_star_matches,hit_2_main_or_better_rate,hit_3_main_or_better_rate,hit_2_main_plus_1_star_or_better_rate
-Era 3 diversified random,60,991.5,1.5333,1.1,0.4833,0.05,0.2333
-Pure random baseline,60,1931.5,1.4333,1.1167,0.5,0.0167,0.1833
+Era 3 diversified random,60,992.5,1.5333,1.1,0.4833,0.05,0.2167
+Pure random baseline,60,1932.5,1.4333,1.1167,0.5,0.0167,0.1833
 Recent 250 draws training,60,250.0,1.0667,1.1,0.2833,0.0167,0.1833
-All-time training,60,1931.5,1.0833,1.2333,0.25,0.0167,0.1667
-Era 3 only training,60,991.5,1.2167,1.1667,0.3,0.05,0.15
+All-time training,60,1932.5,1.1,1.2333,0.25,0.0333,0.1667
+Era 3 only training,60,992.5,1.2333,1.1667,0.3167,0.05,0.15

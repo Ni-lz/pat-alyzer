@@ -1,21 +1,21 @@
 window,strategy,draws_tested,sample_size,avg_best_main_matches,avg_best_star_matches,hit_2_main_or_better_rate,hit_3_main_or_better_rate,hit_2_main_plus_1_star_or_better_rate
 Last 60 draws,Pure random,60,1200,1.4333,1.15,0.4667,0.0167,0.2667
-Last 60 draws,Hybrid-zone only,60,1200,1.1667,1.0667,0.2667,0.0167,0.1833
-Last 60 draws,Era 3 diversified random,60,1200,1.4167,1.1,0.3667,0.05,0.1667
+Last 60 draws,Hybrid-zone only,60,1200,1.15,1.0667,0.2667,0.0,0.1833
+Last 60 draws,Era 3 diversified random,60,1200,1.3833,1.1,0.35,0.0333,0.15
 Last 60 draws,Most-common-zone only,60,1200,1.1,1.1333,0.2667,0.0333,0.1333
-Last 60 draws,Pat-alyzer v2 scored,60,1200,1.1667,1.15,0.2833,0.0167,0.0833
-Last 150 draws,Pat-alyzer v2 scored,150,800,1.3267,1.1133,0.4133,0.0533,0.2133
+Last 60 draws,Pat-alyzer v2 scored,60,1200,1.1833,1.15,0.3,0.0167,0.1
+Last 150 draws,Pat-alyzer v2 scored,150,800,1.3333,1.1133,0.42,0.0533,0.22
 Last 150 draws,Hybrid-zone only,150,800,1.28,1.0867,0.34,0.0467,0.2
-Last 150 draws,Pure random,150,800,1.46,1.1533,0.4133,0.04,0.1867
-Last 150 draws,Era 3 diversified random,150,800,1.5333,1.1867,0.4667,0.0667,0.1667
-Last 150 draws,Most-common-zone only,150,800,1.24,1.1133,0.3267,0.0333,0.16
+Last 150 draws,Pure random,150,800,1.4533,1.1533,0.4067,0.04,0.18
+Last 150 draws,Most-common-zone only,150,800,1.2333,1.1133,0.3267,0.0267,0.1667
+Last 150 draws,Era 3 diversified random,150,800,1.52,1.1867,0.46,0.06,0.16
 Last 250 draws,Pure random,250,600,1.508,1.164,0.464,0.056,0.216
-Last 250 draws,Hybrid-zone only,250,600,1.308,1.132,0.36,0.044,0.212
-Last 250 draws,Era 3 diversified random,250,600,1.52,1.132,0.492,0.044,0.18
-Last 250 draws,Most-common-zone only,250,600,1.296,1.108,0.376,0.044,0.16
-Last 250 draws,Pat-alyzer v2 scored,250,600,1.196,1.116,0.304,0.028,0.152
-Era 3 full,Pure random,1022,350,1.5548,1.1223,0.5068,0.0587,0.2055
-Era 3 full,Era 3 diversified random,1022,350,1.5519,1.1204,0.5029,0.0528,0.1937
-Era 3 full,Pat-alyzer v2 scored,1022,350,1.3307,1.135,0.3816,0.0342,0.1683
-Era 3 full,Hybrid-zone only,1022,350,1.3033,1.1204,0.3532,0.0401,0.1634
-Era 3 full,Most-common-zone only,1022,350,1.3141,1.1233,0.3689,0.0323,0.1624
+Last 250 draws,Hybrid-zone only,250,600,1.312,1.132,0.364,0.044,0.216
+Last 250 draws,Era 3 diversified random,250,600,1.524,1.132,0.496,0.044,0.184
+Last 250 draws,Most-common-zone only,250,600,1.3,1.108,0.38,0.044,0.164
+Last 250 draws,Pat-alyzer v2 scored,250,600,1.2,1.116,0.308,0.028,0.156
+Era 3 full,Pure random,1023,350,1.5543,1.1222,0.5064,0.0587,0.2053
+Era 3 full,Era 3 diversified random,1023,350,1.5523,1.1202,0.5034,0.0528,0.1945
+Era 3 full,Pat-alyzer v2 scored,1023,350,1.3304,1.1349,0.3812,0.0342,0.1681
+Era 3 full,Hybrid-zone only,1023,350,1.304,1.1202,0.3539,0.0401,0.1642
+Era 3 full,Most-common-zone only,1023,350,1.3148,1.1232,0.3695,0.0323,0.1632
