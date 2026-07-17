@@ -1,91 +1,91 @@
 [
   {
-    "latest_draw_date":"2026-07-14",
+    "latest_draw_date":"2026-07-17",
     "ticket_number":1,
-    "numbers":"23, 24, 32, 37, 44",
+    "numbers":"10, 15, 34, 39, 43",
     "stars":"2, 7",
     "main_matches_against_latest_known_draw":1,
     "star_matches_against_latest_known_draw":0,
     "note":"This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score."
   },
   {
-    "latest_draw_date":"2026-07-14",
+    "latest_draw_date":"2026-07-17",
     "ticket_number":2,
-    "numbers":"13, 17, 34, 40, 46",
-    "stars":"8, 12",
+    "numbers":"8, 13, 43, 44, 50",
+    "stars":"5, 12",
     "main_matches_against_latest_known_draw":0,
-    "star_matches_against_latest_known_draw":1,
+    "star_matches_against_latest_known_draw":0,
     "note":"This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score."
   },
   {
-    "latest_draw_date":"2026-07-14",
+    "latest_draw_date":"2026-07-17",
     "ticket_number":3,
-    "numbers":"10, 13, 34, 40, 49",
-    "stars":"2, 5",
-    "main_matches_against_latest_known_draw":1,
-    "star_matches_against_latest_known_draw":0,
+    "numbers":"14, 15, 36, 41, 44",
+    "stars":"7, 10",
+    "main_matches_against_latest_known_draw":0,
+    "star_matches_against_latest_known_draw":1,
     "note":"This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score."
   },
   {
-    "latest_draw_date":"2026-07-14",
+    "latest_draw_date":"2026-07-17",
     "ticket_number":4,
-    "numbers":"1, 15, 36, 38, 42",
-    "stars":"8, 9",
-    "main_matches_against_latest_known_draw":1,
+    "numbers":"14, 15, 37, 44, 50",
+    "stars":"2, 10",
+    "main_matches_against_latest_known_draw":0,
     "star_matches_against_latest_known_draw":1,
     "note":"This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score."
   },
   {
-    "latest_draw_date":"2026-07-14",
+    "latest_draw_date":"2026-07-17",
     "ticket_number":5,
-    "numbers":"1, 18, 32, 43, 50",
-    "stars":"4, 11",
-    "main_matches_against_latest_known_draw":0,
-    "star_matches_against_latest_known_draw":0,
-    "note":"This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score."
-  },
-  {
-    "latest_draw_date":"2026-07-14",
-    "ticket_number":6,
-    "numbers":"11, 25, 40, 42, 46",
-    "stars":"2, 3",
-    "main_matches_against_latest_known_draw":1,
-    "star_matches_against_latest_known_draw":0,
-    "note":"This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score."
-  },
-  {
-    "latest_draw_date":"2026-07-14",
-    "ticket_number":7,
-    "numbers":"2, 21, 45, 46, 50",
-    "stars":"2, 9",
-    "main_matches_against_latest_known_draw":0,
-    "star_matches_against_latest_known_draw":1,
-    "note":"This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score."
-  },
-  {
-    "latest_draw_date":"2026-07-14",
-    "ticket_number":8,
-    "numbers":"20, 24, 39, 40, 43",
+    "numbers":"15, 24, 33, 38, 50",
     "stars":"8, 9",
     "main_matches_against_latest_known_draw":0,
     "star_matches_against_latest_known_draw":1,
     "note":"This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score."
   },
   {
-    "latest_draw_date":"2026-07-14",
+    "latest_draw_date":"2026-07-17",
+    "ticket_number":6,
+    "numbers":"8, 11, 36, 39, 50",
+    "stars":"1, 5",
+    "main_matches_against_latest_known_draw":0,
+    "star_matches_against_latest_known_draw":0,
+    "note":"This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score."
+  },
+  {
+    "latest_draw_date":"2026-07-17",
+    "ticket_number":7,
+    "numbers":"11, 18, 32, 47, 48",
+    "stars":"3, 6",
+    "main_matches_against_latest_known_draw":0,
+    "star_matches_against_latest_known_draw":0,
+    "note":"This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score."
+  },
+  {
+    "latest_draw_date":"2026-07-17",
+    "ticket_number":8,
+    "numbers":"9, 24, 39, 41, 42",
+    "stars":"5, 6",
+    "main_matches_against_latest_known_draw":0,
+    "star_matches_against_latest_known_draw":0,
+    "note":"This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score."
+  },
+  {
+    "latest_draw_date":"2026-07-17",
     "ticket_number":9,
-    "numbers":"11, 25, 38, 42, 50",
-    "stars":"3, 4",
+    "numbers":"5, 15, 32, 40, 42",
+    "stars":"1, 2",
     "main_matches_against_latest_known_draw":1,
     "star_matches_against_latest_known_draw":0,
     "note":"This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score."
   },
   {
-    "latest_draw_date":"2026-07-14",
+    "latest_draw_date":"2026-07-17",
     "ticket_number":10,
-    "numbers":"9, 12, 43, 46, 50",
-    "stars":"10, 11",
-    "main_matches_against_latest_known_draw":0,
+    "numbers":"7, 24, 34, 43, 47",
+    "stars":"5, 11",
+    "main_matches_against_latest_known_draw":1,
     "star_matches_against_latest_known_draw":0,
     "note":"This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score."
   }
