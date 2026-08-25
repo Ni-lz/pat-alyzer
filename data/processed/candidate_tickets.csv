@@ -1,11 +1,11 @@
 numbers,stars,zone_signature,hybrid_score,odd_even_score,low_high_score,sum_score,pair_score,triplet_score,gap_overdue_score,star_pattern_score,anti_crowd_score,duplicate_penalty,final_strategy_score,why_selected
-"6, 15, 22, 32, 43","1, 11",1-1-1-1-1,74,100,100,100,92,40,100,96,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 2/3 | Low/high 3/2 | Sum 118 | Avg gap 26.2 | Star zone 1-0-1 | No exact historical duplicate
-"1, 19, 22, 32, 43","1, 9",1-1-1-1-1,74,100,100,100,89,40,100,96,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 117 | Avg gap 18.6 | Star zone 1-0-1 | No exact historical duplicate
-"1, 19, 22, 32, 43","8, 11",1-1-1-1-1,74,100,100,100,89,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 117 | Avg gap 18.6 | Star zone 0-1-1 | No exact historical duplicate
-"9, 19, 22, 32, 41","4, 11",1-1-1-1-1,74,100,100,100,87,40,100,96,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 123 | Avg gap 18.2 | Star zone 1-0-1 | No exact historical duplicate
-"1, 19, 22, 32, 42","6, 10",1-1-1-1-1,74,100,100,100,86,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 2/3 | Low/high 3/2 | Sum 116 | Avg gap 15.2 | Star zone 0-1-1 | No exact historical duplicate
-"1, 16, 27, 32, 41","3, 12",1-1-1-1-1,74,100,100,100,86,40,100,96,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 2/3 | Sum 117 | Avg gap 21.6 | Star zone 1-0-1 | No exact historical duplicate
-"1, 17, 22, 32, 41","1, 10",1-1-1-1-1,74,100,100,100,85,40,100,96,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 113 | Avg gap 15.0 | Star zone 1-0-1 | No exact historical duplicate
-"1, 15, 22, 32, 41","2, 10",1-1-1-1-1,74,100,100,100,85,40,100,96,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 3/2 | Sum 111 | Avg gap 24.0 | Star zone 1-0-1 | No exact historical duplicate
-"9, 16, 27, 32, 44","9, 12",1-1-1-1-1,74,100,100,100,84,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 2/3 | Low/high 2/3 | Sum 128 | Avg gap 22.6 | Star zone 0-0-2 | No exact historical duplicate
-"4, 13, 22, 32, 43","6, 9",1-1-1-1-1,74,100,100,100,83,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 2/3 | Low/high 3/2 | Sum 114 | Avg gap 24.4 | Star zone 0-1-1 | No exact historical duplicate
+"6, 19, 22, 32, 43","7, 11",1-1-1-1-1,74,100,100,100,89,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 2/3 | Low/high 3/2 | Sum 122 | Avg gap 19.8 | Star zone 0-1-1 | No exact historical duplicate
+"6, 15, 27, 32, 43","6, 8",1-1-1-1-1,74,100,100,100,87,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 2/3 | Sum 123 | Avg gap 31.2 | Star zone 0-2-0 | No exact historical duplicate
+"4, 19, 22, 32, 43","1, 4",1-1-1-1-1,74,100,100,100,86,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 2/3 | Low/high 3/2 | Sum 120 | Avg gap 20.6 | Star zone 2-0-0 | No exact historical duplicate
+"4, 19, 22, 32, 43","7, 9",1-1-1-1-1,74,100,100,100,86,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 2/3 | Low/high 3/2 | Sum 120 | Avg gap 20.6 | Star zone 0-1-1 | No exact historical duplicate
+"6, 17, 22, 32, 43","6, 9",1-1-1-1-1,74,100,100,100,85,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 2/3 | Low/high 3/2 | Sum 120 | Avg gap 18.2 | Star zone 0-1-1 | No exact historical duplicate
+"4, 13, 22, 32, 43","7, 10",1-1-1-1-1,74,100,100,100,83,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 2/3 | Low/high 3/2 | Sum 114 | Avg gap 25.4 | Star zone 0-1-1 | No exact historical duplicate
+"10, 18, 27, 32, 43","6, 12",1-1-1-1-1,74,100,100,100,82,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 2/3 | Low/high 2/3 | Sum 130 | Avg gap 23.4 | Star zone 0-1-1 | No exact historical duplicate
+"1, 20, 29, 32, 43","7, 9",1-1-1-1-1,74,100,100,100,82,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 2/3 | Sum 125 | Avg gap 19.2 | Star zone 0-1-1 | No exact historical duplicate
+"6, 16, 29, 32, 43","10, 12",1-1-1-1-1,74,100,100,100,82,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 2/3 | Low/high 2/3 | Sum 126 | Avg gap 17.2 | Star zone 0-0-2 | No exact historical duplicate
+"1, 20, 29, 32, 43","8, 9",1-1-1-1-1,74,100,100,100,82,40,100,100,65,0,85,Hybrid 60/40 zone 1-1-1-1-1 | Odd/even 3/2 | Low/high 2/3 | Sum 125 | Avg gap 19.2 | Star zone 0-1-1 | No exact historical duplicate
