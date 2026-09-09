@@ -1,6 +1,6 @@
 draw_position,rows,avg_number,most_common_number,low_1_25_rate,high_26_50_rate
-draw_order_1,277,25.61,10,0.491,0.509
-draw_order_2,277,26.18,24,0.4982,0.5018
-draw_order_3,277,27.51,37,0.444,0.556
-draw_order_4,277,25.45,17,0.5018,0.4982
-draw_order_5,277,24.45,8,0.5379,0.4621
+draw_order_1,278,25.57,10,0.4928,0.5072
+draw_order_2,278,26.15,24,0.5,0.5
+draw_order_3,278,27.53,37,0.4424,0.5576
+draw_order_4,278,25.49,17,0.5,0.5
+draw_order_5,278,24.5,8,0.536,0.464
