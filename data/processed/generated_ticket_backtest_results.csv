@@ -1,9 +1,4 @@
 draw_date,strategy,best_main_matches,best_star_matches,hit_2_main_or_better,hit_3_main_or_better,hit_2_main_plus_1_star_or_better
-2026-02-13,Era 3 diversified random,2,1,True,False,True
-2026-02-13,Pat-alyzer v2 scored,1,1,False,False,False
-2026-02-13,Hybrid-zone only,1,1,False,False,False
-2026-02-13,Most-common-zone only,1,1,False,False,False
-2026-02-13,Pure random,2,1,True,False,True
 2026-02-17,Era 3 diversified random,1,1,False,False,False
 2026-02-17,Pat-alyzer v2 scored,1,1,False,False,False
 2026-02-17,Hybrid-zone only,1,1,False,False,False
@@ -299,3 +294,8 @@ draw_date,strategy,best_main_matches,best_star_matches,hit_2_main_or_better,hit_
 2026-09-08,Hybrid-zone only,2,1,True,False,False
 2026-09-08,Most-common-zone only,2,1,True,False,True
 2026-09-08,Pure random,2,1,True,False,True
+2026-09-11,Era 3 diversified random,1,1,False,False,False
+2026-09-11,Pat-alyzer v2 scored,1,1,False,False,False
+2026-09-11,Hybrid-zone only,1,1,False,False,False
+2026-09-11,Most-common-zone only,1,1,False,False,False
+2026-09-11,Pure random,1,1,False,False,False
