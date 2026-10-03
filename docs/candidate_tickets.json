@@ -1,7 +1,7 @@
 [
   {
-    "numbers":"2, 12, 32, 33, 47",
-    "stars":"3, 6",
+    "numbers":"1, 18, 32, 36, 41",
+    "stars":"8, 12",
     "zone_signature":"1-1-0-2-1",
     "hybrid_score":50,
     "odd_even_score":100,
@@ -14,30 +14,13 @@
     "anti_crowd_score":80,
     "duplicate_penalty":0,
     "final_strategy_score":98,
-    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 1-1-0-2-1 | Odd\/even 2\/3 | Low\/high 2\/3 | Sum 126 | Avg gap 12.4 | Star zone 1-1-0 | No exact historical duplicate"
+    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 1-1-0-2-1 | Odd\/even 2\/3 | Low\/high 2\/3 | Sum 128 | Avg gap 20.4 | Star zone 0-1-1 | No exact historical duplicate"
   },
   {
-    "numbers":"19, 20, 32, 33, 49",
-    "stars":"3, 8",
-    "zone_signature":"0-2-0-2-1",
-    "hybrid_score":0,
-    "odd_even_score":100,
-    "low_high_score":100,
-    "sum_score":100,
-    "pair_score":100,
-    "triplet_score":85,
-    "gap_overdue_score":100,
-    "star_pattern_score":100,
-    "anti_crowd_score":80,
-    "duplicate_penalty":0,
-    "final_strategy_score":98,
-    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 0-2-0-2-1 | Odd\/even 3\/2 | Low\/high 2\/3 | Sum 153 | Avg gap 18.4 | Star zone 1-1-0 | No exact historical duplicate"
-  },
-  {
-    "numbers":"5, 10, 39, 43, 48",
-    "stars":"1, 2",
-    "zone_signature":"2-0-0-1-2",
-    "hybrid_score":0,
+    "numbers":"3, 24, 32, 34, 45",
+    "stars":"2, 7",
+    "zone_signature":"1-0-1-2-1",
+    "hybrid_score":45,
     "odd_even_score":100,
     "low_high_score":100,
     "sum_score":100,
@@ -48,11 +31,45 @@
     "anti_crowd_score":80,
     "duplicate_penalty":0,
     "final_strategy_score":98,
-    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 2-0-0-1-2 | Odd\/even 3\/2 | Low\/high 2\/3 | Sum 145 | Avg gap 14.2 | Star zone 2-0-0 | No exact historical duplicate"
+    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 1-0-1-2-1 | Odd\/even 2\/3 | Low\/high 2\/3 | Sum 138 | Avg gap 19.8 | Star zone 1-1-0 | No exact historical duplicate"
   },
   {
-    "numbers":"10, 16, 32, 43, 49",
-    "stars":"5, 12",
+    "numbers":"5, 18, 41, 44, 45",
+    "stars":"1, 3",
+    "zone_signature":"1-1-0-0-3",
+    "hybrid_score":0,
+    "odd_even_score":100,
+    "low_high_score":100,
+    "sum_score":100,
+    "pair_score":100,
+    "triplet_score":100,
+    "gap_overdue_score":100,
+    "star_pattern_score":100,
+    "anti_crowd_score":80,
+    "duplicate_penalty":0,
+    "final_strategy_score":98,
+    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 1-1-0-0-3 | Odd\/even 3\/2 | Low\/high 2\/3 | Sum 153 | Avg gap 12.0 | Star zone 2-0-0 | No exact historical duplicate"
+  },
+  {
+    "numbers":"19, 24, 34, 41, 42",
+    "stars":"3, 6",
+    "zone_signature":"0-1-1-1-2",
+    "hybrid_score":57,
+    "odd_even_score":100,
+    "low_high_score":100,
+    "sum_score":100,
+    "pair_score":100,
+    "triplet_score":40,
+    "gap_overdue_score":100,
+    "star_pattern_score":100,
+    "anti_crowd_score":80,
+    "duplicate_penalty":0,
+    "final_strategy_score":98,
+    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 0-1-1-1-2 | Odd\/even 2\/3 | Low\/high 2\/3 | Sum 160 | Avg gap 16.6 | Star zone 1-1-0 | No exact historical duplicate"
+  },
+  {
+    "numbers":"6, 11, 37, 41, 48",
+    "stars":"7, 9",
     "zone_signature":"1-1-0-1-2",
     "hybrid_score":54,
     "odd_even_score":100,
@@ -65,11 +82,11 @@
     "anti_crowd_score":80,
     "duplicate_penalty":0,
     "final_strategy_score":98,
-    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 1-1-0-1-2 | Odd\/even 2\/3 | Low\/high 2\/3 | Sum 150 | Avg gap 17.2 | Star zone 0-1-1 | No exact historical duplicate"
+    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 1-1-0-1-2 | Odd\/even 3\/2 | Low\/high 2\/3 | Sum 143 | Avg gap 16.0 | Star zone 0-1-1 | No exact historical duplicate"
   },
   {
-    "numbers":"2, 20, 36, 39, 41",
-    "stars":"4, 5",
+    "numbers":"5, 14, 32, 39, 42",
+    "stars":"6, 7",
     "zone_signature":"1-1-0-2-1",
     "hybrid_score":50,
     "odd_even_score":100,
@@ -82,11 +99,28 @@
     "anti_crowd_score":80,
     "duplicate_penalty":0,
     "final_strategy_score":98,
-    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 1-1-0-2-1 | Odd\/even 2\/3 | Low\/high 2\/3 | Sum 138 | Avg gap 19.8 | Star zone 1-1-0 | No exact historical duplicate"
+    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 1-1-0-2-1 | Odd\/even 2\/3 | Low\/high 2\/3 | Sum 132 | Avg gap 14.8 | Star zone 0-2-0 | No exact historical duplicate"
   },
   {
-    "numbers":"4, 10, 38, 41, 43",
-    "stars":"2, 7",
+    "numbers":"10, 13, 32, 41, 48",
+    "stars":"10, 11",
+    "zone_signature":"1-1-0-1-2",
+    "hybrid_score":54,
+    "odd_even_score":100,
+    "low_high_score":100,
+    "sum_score":100,
+    "pair_score":100,
+    "triplet_score":40,
+    "gap_overdue_score":100,
+    "star_pattern_score":100,
+    "anti_crowd_score":80,
+    "duplicate_penalty":0,
+    "final_strategy_score":98,
+    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 1-1-0-1-2 | Odd\/even 2\/3 | Low\/high 2\/3 | Sum 144 | Avg gap 17.0 | Star zone 0-0-2 | No exact historical duplicate"
+  },
+  {
+    "numbers":"1, 2, 32, 45, 46",
+    "stars":"5, 8",
     "zone_signature":"2-0-0-1-2",
     "hybrid_score":0,
     "odd_even_score":100,
@@ -99,12 +133,12 @@
     "anti_crowd_score":80,
     "duplicate_penalty":0,
     "final_strategy_score":98,
-    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 2-0-0-1-2 | Odd\/even 2\/3 | Low\/high 2\/3 | Sum 136 | Avg gap 14.6 | Star zone 1-1-0 | No exact historical duplicate"
+    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 2-0-0-1-2 | Odd\/even 2\/3 | Low\/high 2\/3 | Sum 126 | Avg gap 14.8 | Star zone 0-2-0 | No exact historical duplicate"
   },
   {
-    "numbers":"8, 16, 41, 43, 44",
-    "stars":"2, 9",
-    "zone_signature":"1-1-0-0-3",
+    "numbers":"11, 13, 43, 46, 48",
+    "stars":"8, 10",
+    "zone_signature":"0-2-0-0-3",
     "hybrid_score":0,
     "odd_even_score":100,
     "low_high_score":100,
@@ -116,30 +150,13 @@
     "anti_crowd_score":80,
     "duplicate_penalty":0,
     "final_strategy_score":98,
-    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 1-1-0-0-3 | Odd\/even 2\/3 | Low\/high 2\/3 | Sum 152 | Avg gap 14.6 | Star zone 1-0-1 | No exact historical duplicate"
+    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 0-2-0-0-3 | Odd\/even 3\/2 | Low\/high 2\/3 | Sum 161 | Avg gap 12.8 | Star zone 0-1-1 | No exact historical duplicate"
   },
   {
-    "numbers":"3, 5, 40, 41, 44",
-    "stars":"6, 10",
-    "zone_signature":"2-0-0-1-2",
-    "hybrid_score":0,
-    "odd_even_score":100,
-    "low_high_score":100,
-    "sum_score":100,
-    "pair_score":100,
-    "triplet_score":70,
-    "gap_overdue_score":100,
-    "star_pattern_score":100,
-    "anti_crowd_score":80,
-    "duplicate_penalty":0,
-    "final_strategy_score":98,
-    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 2-0-0-1-2 | Odd\/even 3\/2 | Low\/high 2\/3 | Sum 133 | Avg gap 13.2 | Star zone 0-1-1 | No exact historical duplicate"
-  },
-  {
-    "numbers":"3, 6, 34, 35, 48",
-    "stars":"2, 12",
-    "zone_signature":"2-0-0-2-1",
-    "hybrid_score":0,
+    "numbers":"1, 11, 32, 47, 48",
+    "stars":"6, 7",
+    "zone_signature":"1-1-0-1-2",
+    "hybrid_score":54,
     "odd_even_score":100,
     "low_high_score":100,
     "sum_score":100,
@@ -150,23 +167,6 @@
     "anti_crowd_score":80,
     "duplicate_penalty":0,
     "final_strategy_score":98,
-    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 2-0-0-2-1 | Odd\/even 2\/3 | Low\/high 2\/3 | Sum 126 | Avg gap 14.2 | Star zone 1-0-1 | No exact historical duplicate"
-  },
-  {
-    "numbers":"5, 8, 34, 41, 48",
-    "stars":"1, 7",
-    "zone_signature":"2-0-0-1-2",
-    "hybrid_score":0,
-    "odd_even_score":100,
-    "low_high_score":100,
-    "sum_score":100,
-    "pair_score":100,
-    "triplet_score":40,
-    "gap_overdue_score":100,
-    "star_pattern_score":100,
-    "anti_crowd_score":80,
-    "duplicate_penalty":0,
-    "final_strategy_score":98,
-    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 2-0-0-1-2 | Odd\/even 2\/3 | Low\/high 2\/3 | Sum 136 | Avg gap 14.2 | Star zone 1-1-0 | No exact historical duplicate"
+    "why_selected":"Era 3 diversified random | Hybrid 60\/40 zone 1-1-0-1-2 | Odd\/even 3\/2 | Low\/high 2\/3 | Sum 139 | Avg gap 13.8 | Star zone 0-2-0 | No exact historical duplicate"
   }
 ]
