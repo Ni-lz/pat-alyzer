@@ -1,79 +1,79 @@
 [
   {
     "field":"ball_machine",
-    "filled_rows":284,
-    "total_draws":1986,
-    "coverage_rate":0.143,
+    "filled_rows":286,
+    "total_draws":1987,
+    "coverage_rate":0.1439,
     "status":"PARTIAL"
   },
   {
     "field":"ball_set",
-    "filled_rows":284,
-    "total_draws":1986,
-    "coverage_rate":0.143,
+    "filled_rows":286,
+    "total_draws":1987,
+    "coverage_rate":0.1439,
     "status":"PARTIAL"
   },
   {
     "field":"draw_order_1",
-    "filled_rows":285,
-    "total_draws":1986,
-    "coverage_rate":0.1435,
+    "filled_rows":286,
+    "total_draws":1987,
+    "coverage_rate":0.1439,
     "status":"PARTIAL"
   },
   {
     "field":"draw_order_2",
-    "filled_rows":285,
-    "total_draws":1986,
-    "coverage_rate":0.1435,
+    "filled_rows":286,
+    "total_draws":1987,
+    "coverage_rate":0.1439,
     "status":"PARTIAL"
   },
   {
     "field":"draw_order_3",
-    "filled_rows":285,
-    "total_draws":1986,
-    "coverage_rate":0.1435,
+    "filled_rows":286,
+    "total_draws":1987,
+    "coverage_rate":0.1439,
     "status":"PARTIAL"
   },
   {
     "field":"draw_order_4",
-    "filled_rows":285,
-    "total_draws":1986,
-    "coverage_rate":0.1435,
+    "filled_rows":286,
+    "total_draws":1987,
+    "coverage_rate":0.1439,
     "status":"PARTIAL"
   },
   {
     "field":"draw_order_5",
-    "filled_rows":285,
-    "total_draws":1986,
-    "coverage_rate":0.1435,
+    "filled_rows":286,
+    "total_draws":1987,
+    "coverage_rate":0.1439,
     "status":"PARTIAL"
   },
   {
     "field":"star_order_1",
-    "filled_rows":285,
-    "total_draws":1986,
-    "coverage_rate":0.1435,
+    "filled_rows":286,
+    "total_draws":1987,
+    "coverage_rate":0.1439,
     "status":"PARTIAL"
   },
   {
     "field":"star_order_2",
-    "filled_rows":285,
-    "total_draws":1986,
-    "coverage_rate":0.1435,
+    "filled_rows":286,
+    "total_draws":1987,
+    "coverage_rate":0.1439,
     "status":"PARTIAL"
   },
   {
     "field":"metadata_status",
-    "filled_rows":285,
-    "total_draws":1986,
-    "coverage_rate":0.1435,
+    "filled_rows":286,
+    "total_draws":1987,
+    "coverage_rate":0.1439,
     "status":"PARTIAL"
   },
   {
     "field":"metadata_rows_overall",
-    "filled_rows":285,
-    "total_draws":1986,
-    "coverage_rate":0.1435,
+    "filled_rows":286,
+    "total_draws":1987,
+    "coverage_rate":0.1439,
     "status":"OK"
   }
 ]
