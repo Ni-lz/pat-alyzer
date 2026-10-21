@@ -1,7 +1,7 @@
 test_name,draws_tested,hit_rate
-Hybrid 60 common / 40 missing,1790,0.2307
-Hybrid 70 common / 30 missing,1790,0.2302
-Most-common top zone signatures,1790,0.2279
-Hybrid 50 common / 50 missing,1790,0.2201
-Missing-pattern top zone signatures,1790,0.1844
-Random signature baseline estimate,1790,0.0912
+Hybrid 60 common / 40 missing,1791,0.2312
+Hybrid 70 common / 30 missing,1791,0.2306
+Most-common top zone signatures,1791,0.2284
+Hybrid 50 common / 50 missing,1791,0.2205
+Missing-pattern top zone signatures,1791,0.1843
+Random signature baseline estimate,1791,0.0911
