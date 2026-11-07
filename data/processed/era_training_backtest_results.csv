@@ -1,9 +1,4 @@
 draw_date,training_mode,training_draws,best_main_matches,best_star_matches,hit_2_main_or_better,hit_3_main_or_better,hit_2_main_plus_1_star_or_better
-2026-04-10,Era 3 diversified random,995,2,1,True,False,False
-2026-04-10,All-time training,1935,0,1,False,False,False
-2026-04-10,Era 3 only training,995,1,1,False,False,False
-2026-04-10,Recent 250 draws training,250,1,1,False,False,False
-2026-04-10,Pure random baseline,1935,2,1,True,False,False
 2026-04-14,Era 3 diversified random,996,1,1,False,False,False
 2026-04-14,All-time training,1936,1,1,False,False,False
 2026-04-14,Era 3 only training,996,2,1,True,False,False
@@ -299,3 +294,8 @@ draw_date,training_mode,training_draws,best_main_matches,best_star_matches,hit_2
 2026-11-03,Era 3 only training,1054,1,1,False,False,False
 2026-11-03,Recent 250 draws training,250,1,1,False,False,False
 2026-11-03,Pure random baseline,1994,0,1,False,False,False
+2026-11-06,Era 3 diversified random,1055,2,1,True,False,True
+2026-11-06,All-time training,1995,1,2,False,False,False
+2026-11-06,Era 3 only training,1055,0,1,False,False,False
+2026-11-06,Recent 250 draws training,250,1,2,False,False,False
+2026-11-06,Pure random baseline,1995,1,1,False,False,False
