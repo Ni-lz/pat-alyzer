@@ -1,11 +1,11 @@
 latest_draw_date,ticket_number,numbers,stars,main_matches_against_latest_known_draw,star_matches_against_latest_known_draw,note
-2026-11-10,1,"6, 13, 40, 41, 48","4, 10",1,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
-2026-11-10,2,"5, 8, 33, 35, 36","8, 10",0,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
-2026-11-10,3,"7, 15, 34, 36, 41","10, 12",2,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
-2026-11-10,4,"4, 23, 34, 43, 50","3, 7",0,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
-2026-11-10,5,"12, 21, 34, 36, 41","3, 9",1,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
-2026-11-10,6,"19, 25, 34, 38, 50","8, 12",0,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
-2026-11-10,7,"10, 13, 34, 35, 46","1, 5",0,2,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
-2026-11-10,8,"15, 24, 35, 36, 46","7, 10",1,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
-2026-11-10,9,"8, 21, 32, 36, 45","2, 8",0,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
-2026-11-10,10,"6, 25, 34, 38, 47","1, 4",0,1,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
+2026-11-13,1,"5, 6, 38, 43, 44","3, 9",0,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
+2026-11-13,2,"1, 10, 36, 38, 39","9, 11",0,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
+2026-11-13,3,"6, 9, 40, 42, 45","7, 8",1,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
+2026-11-13,4,"18, 19, 34, 39, 44","1, 8",0,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
+2026-11-13,5,"6, 13, 34, 45, 48","9, 11",1,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
+2026-11-13,6,"1, 23, 34, 43, 44","10, 12",0,1,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
+2026-11-13,7,"6, 20, 41, 46, 49","1, 2",1,1,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
+2026-11-13,8,"5, 6, 41, 46, 47","2, 8",1,1,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
+2026-11-13,9,"5, 19, 36, 40, 50","4, 6",0,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
+2026-11-13,10,"5, 14, 36, 43, 46","7, 8",0,0,This compares generated tickets against the latest known draw only for post-build tracking; it is not a future prediction score.
